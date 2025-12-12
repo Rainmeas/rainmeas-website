@@ -1200,6 +1200,153 @@ code {
   color: var(--error-color);
 }
 
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1001;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background-color: var(--surface-color);
+  margin: 5% auto;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 80%;
+  max-width: 800px;
+  box-shadow: var(--shadow);
+  animation: modalOpen 0.3s ease;
+}
+
+@keyframes modalOpen {
+  from {opacity: 0; transform: translateY(-50px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.modal-close {
+  color: var(--text-secondary);
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 30px;
+}
+
+.package-details {
+  display: grid;
+  grid-template-columns: 1fr 250px;
+  gap: 30px;
+}
+
+.package-details-main h3 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+}
+
+.package-details-main p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.package-details-sidebar {
+  background: var(--surface-light);
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.package-detail-item {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.package-detail-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.package-detail-label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--text-primary);
+}
+
+.package-detail-value {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.package-detail-value a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.package-detail-value a:hover {
+  text-decoration: underline;
+}
+
+.install-command {
+  background: var(--background-darker);
+  padding: 15px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  margin: 15px 0;
+  position: relative;
+}
+
+.copy-command-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--surface-light);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-command-btn:hover {
+  background: var(--surface-color);
+  color: var(--text-primary);
+}
+
 /* Responsive Design */
 @media screen and (max-width: 992px) {
   .hero-container {

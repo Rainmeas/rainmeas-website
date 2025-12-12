@@ -1,90 +1,131 @@
-// Function to load registry data from local files
-async function loadRegistryData() {
+// Function to fetch registry index from GitHub
+async function fetchRegistryIndex() {
     try {
-        // Since we're running locally, we'll simulate loading the registry data
-        // In a real web deployment, this would be fetched from a server endpoint
-        
-        // For now, we'll return hardcoded data based on the actual registry files
-        const registryData = {
-            "nurashade-reversegeo": {
-                "latest": "1.0.0",
-                "versions": ["1.0.0"]
-            },
-            "nurashadeweather": {
-                "latest": "1.0.0",
-                "versions": ["1.0.0"]
-            }
-        };
-        
-        return registryData;
+        const response = await fetch('https://raw.githubusercontent.com/Rainmeas/rainmeas-registry/main/index.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error('Error loading registry data:', error);
-        return null;
+        console.error('Error fetching registry index:', error);
+        // Fallback to local data if GitHub fetch fails
+        return getLocalRegistryData();
     }
 }
 
-// Function to load package details
-async function loadPackageDetails(packageName) {
+// Function to fetch package details from GitHub
+async function fetchPackageDetails(packageName) {
     try {
-        // Simulate loading package details from local files
-        // In a real deployment, this would fetch from a server
-        
-        const packageData = {
-            "nurashade-reversegeo": {
-                "name": "nurashade-reversegeo",
-                "author": "nurashade",
-                "description": "NuraShade Reverse Geo is a Rainmeter configuration component that provides reverse geocoding capabilities using the BigDataCloud API. Given a latitude and longitude, it retrieves detailed location information including country, city, subdivision, continent, postcode, and more. This package is designed to complement the NuraShade weather suite and enhance location-based displays in Rainmeter skins.",
-                "homepage": "https://github.com/NuraShade/NuraShadeReverseGeo",
-                "license": "Creative Commons Attribution-ShareAlike 3.0 Unported",
-                "versions": {
-                    "1.0.0": {
-                        "download": "https://github.com/NuraShade/NuraShadeReverseGeo/releases/download/v1.0.0/nurashade-reversegeo_v1.0.0.zip"
-                    },
-                    "latest": "1.0.0"
-                },
-                "dependencies": {},
-                "downloads": 12500,
-                "icon": "fas fa-map-marker-alt"
-            },
-            "nurashadeweather": {
-                "name": "nurashadeweather",
-                "author": "nurashade",
-                "description": "NuraShade Weather Measures is a collection of Rainmeter configuration files that provide comprehensive weather forecasting capabilities using the Open-Meteo API. This package includes measures for current weather conditions, 7-day forecasts, and 7-hour hourly forecasts. Most numerical measures include both precise and rounded variants for flexible display options.",
-                "homepage": "https://github.com/NuraShade/NuraShadeWeather",
-                "license": "Creative Commons Attribution-ShareAlike 3.0 Unported",
-                "versions": {
-                    "1.0.0": {
-                        "download": "https://github.com/NuraShade/NuraShadeWeather/releases/download/v1.0.0/nurashadeweather_v1.0.0.zip"
-                    },
-                    "latest": "1.0.0"
-                },
-                "dependencies": {},
-                "downloads": 15200,
-                "icon": "fas fa-cloud-sun"
-            }
-        };
-        
-        return packageData[packageName] || null;
+        const response = await fetch(`https://raw.githubusercontent.com/Rainmeas/rainmeas-registry/main/packages/${packageName}.json`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error(`Error loading package details for ${packageName}:`, error);
-        return null;
+        console.error(`Error fetching package details for ${packageName}:`, error);
+        // Fallback to local data if GitHub fetch fails
+        return getLocalPackageData(packageName);
     }
 }
 
-// Function to get all package details
+// Function to get all package details from GitHub
 async function getAllPackageDetails() {
+    try {
+        const registryData = await fetchRegistryIndex();
+        const packageNames = Object.keys(registryData);
+        
+        const packagePromises = packageNames.map(name => fetchPackageDetails(name));
+        const packages = await Promise.all(packagePromises);
+        
+        // Add icon and other UI-specific data
+        const packagesWithIcons = packages.map(pkg => ({
+            ...pkg,
+            icon: getPackageIcon(pkg.name)
+        }));
+        
+        return packagesWithIcons;
+    } catch (error) {
+        console.error('Error fetching all package details:', error);
+        // Fallback to local data if GitHub fetch fails
+        return getLocalAllPackageDetails();
+    }
+}
+
+// Function to get package icon based on package name
+function getPackageIcon(packageName) {
+    const iconMap = {
+        'nurashade-reversegeo': 'fas fa-map-marker-alt',
+        'nurashadeweather': 'fas fa-cloud-sun'
+    };
+    
+    return iconMap[packageName] || 'fas fa-box-open';
+}
+
+// Local fallback data
+function getLocalRegistryData() {
+    return {
+        "nurashade-reversegeo": {
+            "latest": "1.0.0",
+            "versions": ["1.0.0"]
+        },
+        "nurashadeweather": {
+            "latest": "1.0.0",
+            "versions": ["1.0.0"]
+        }
+    };
+}
+
+function getLocalPackageData(packageName) {
+    const packageData = {
+        "nurashade-reversegeo": {
+            "name": "nurashade-reversegeo",
+            "author": "nurashade",
+            "description": "NuraShade Reverse Geo is a Rainmeter configuration component that provides reverse geocoding capabilities using the BigDataCloud API. Given a latitude and longitude, it retrieves detailed location information including country, city, subdivision, continent, postcode, and more. This package is designed to complement the NuraShade weather suite and enhance location-based displays in Rainmeter skins.",
+            "homepage": "https://github.com/NuraShade/NuraShadeReverseGeo",
+            "license": "Creative Commons Attribution-ShareAlike 3.0 Unported",
+            "versions": {
+                "1.0.0": {
+                    "download": "https://github.com/NuraShade/NuraShadeReverseGeo/releases/download/v1.0.0/nurashade-reversegeo_v1.0.0.zip"
+                },
+                "latest": "1.0.0"
+            },
+            "dependencies": {}
+        },
+        "nurashadeweather": {
+            "name": "nurashadeweather",
+            "author": "nurashade",
+            "description": "NuraShade Weather Measures is a collection of Rainmeter configuration files that provide comprehensive weather forecasting capabilities using the Open-Meteo API. This package includes measures for current weather conditions, 7-day forecasts, and 7-hour hourly forecasts. Most numerical measures include both precise and rounded variants for flexible display options.",
+            "homepage": "https://github.com/NuraShade/NuraShadeWeather",
+            "license": "Creative Commons Attribution-ShareAlike 3.0 Unported",
+            "versions": {
+                "1.0.0": {
+                    "download": "https://github.com/NuraShade/NuraShadeWeather/releases/download/v1.0.0/nurashadeweather_v1.0.0.zip"
+                },
+                "latest": "1.0.0"
+            },
+            "dependencies": {}
+        }
+    };
+    
+    return packageData[packageName] || null;
+}
+
+function getLocalAllPackageDetails() {
     const packages = [
         "nurashade-reversegeo",
         "nurashadeweather"
     ];
     
-    const packageDetails = [];
-    for (const packageName of packages) {
-        const details = await loadPackageDetails(packageName);
-        if (details) {
-            packageDetails.push(details);
+    return packages.map(name => {
+        const pkg = getLocalPackageData(name);
+        if (pkg) {
+            return {
+                ...pkg,
+                icon: getPackageIcon(name)
+            };
         }
-    }
-    
-    return packageDetails;
+        return null;
+    }).filter(pkg => pkg !== null);
 }
