@@ -232,30 +232,7 @@ body {
 .hero-content {
   flex: 1;
   max-width: 600px;
-}
-
-.hero-logo {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.hero-logo-img {
-  max-width: 200px;
-  height: auto;
-  filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.5));
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
+  padding-left: 50px;
 }
 
 .hero-title {
@@ -1186,20 +1163,6 @@ code {
   gap: 10px;
 }
 
-.loading-message,
-.no-packages-message,
-.error-message {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 40px;
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-}
-
-.error-message {
-  color: var(--error-color);
-}
-
 /* Modal Styles */
 .modal {
   display: none;
@@ -1347,6 +1310,20 @@ code {
   color: var(--text-primary);
 }
 
+.loading-message,
+.no-packages-message,
+.error-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.error-message {
+  color: var(--error-color);
+}
+
 /* Responsive Design */
 @media screen and (max-width: 992px) {
   .hero-container {
@@ -1356,6 +1333,7 @@ code {
   
   .hero-content {
     max-width: 100%;
+    padding-left: 0;
   }
   
   .hero-description {
@@ -1497,7 +1475,7 @@ code {
     flex-direction: column;
   }
   
-  .hero-logo-img {
-    max-width: 150px;
+  .package-details {
+    grid-template-columns: 1fr;
   }
 }
