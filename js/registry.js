@@ -39,28 +39,12 @@ async function getAllPackageDetails() {
         const packagePromises = packageNames.map(name => fetchPackageDetails(name));
         const packages = await Promise.all(packagePromises);
         
-        // Add icon and other UI-specific data
-        const packagesWithIcons = packages.map(pkg => ({
-            ...pkg,
-            icon: getPackageIcon(pkg.name)
-        }));
-        
-        return packagesWithIcons;
+        return packages;
     } catch (error) {
         console.error('Error fetching all package details:', error);
         // Fallback to local data if GitHub fetch fails
         return getLocalAllPackageDetails();
     }
-}
-
-// Function to get package icon based on package name
-function getPackageIcon(packageName) {
-    const iconMap = {
-        'nurashade-reversegeo': 'fas fa-map-marker-alt',
-        'nurashadeweather': 'fas fa-cloud-sun'
-    };
-    
-    return iconMap[packageName] || 'fas fa-box-open';
 }
 
 // Local fallback data
@@ -91,7 +75,8 @@ function getLocalPackageData(packageName) {
                 },
                 "latest": "1.0.0"
             },
-            "dependencies": {}
+            "dependencies": {},
+            "icon": "fas fa-map-marker-alt"
         },
         "nurashadeweather": {
             "name": "nurashadeweather",
@@ -105,7 +90,8 @@ function getLocalPackageData(packageName) {
                 },
                 "latest": "1.0.0"
             },
-            "dependencies": {}
+            "dependencies": {},
+            "icon": "fas fa-cloud-sun"
         }
     };
     
@@ -118,14 +104,5 @@ function getLocalAllPackageDetails() {
         "nurashadeweather"
     ];
     
-    return packages.map(name => {
-        const pkg = getLocalPackageData(name);
-        if (pkg) {
-            return {
-                ...pkg,
-                icon: getPackageIcon(name)
-            };
-        }
-        return null;
-    }).filter(pkg => pkg !== null);
+    return packages.map(name => getLocalPackageData(name)).filter(pkg => pkg !== null);
 }

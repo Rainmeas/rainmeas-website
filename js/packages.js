@@ -1,3 +1,9 @@
+// Global variables to track packages
+let allPackages = [];
+let displayedPackages = [];
+let currentPage = 1;
+const packagesPerPage = 6;
+
 // Package search functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Load packages when page loads
@@ -8,21 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchInput) {
         searchInput.addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
-            const packageCards = document.querySelectorAll('.package-card');
-            
-            packageCards.forEach(card => {
-                const packageName = card.querySelector('.package-name').textContent.toLowerCase();
-                const packageAuthor = card.querySelector('.package-author').textContent.toLowerCase();
-                const packageDescription = card.querySelector('.package-description').textContent.toLowerCase();
-                
-                if (packageName.includes(searchTerm) || 
-                    packageAuthor.includes(searchTerm) || 
-                    packageDescription.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            filterPackages(searchTerm);
         });
     }
     
@@ -32,16 +24,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function handlePackageAction(e) {
         const detailsButton = e.target.closest('.btn-secondary');
-        const installButton = e.target.closest('.btn-primary');
         
         if (detailsButton) {
             const packageCard = detailsButton.closest('.package-card');
             const packageName = packageCard.querySelector('.package-name').textContent;
             showPackageDetails(packageName);
-        } else if (installButton) {
-            const packageCard = installButton.closest('.package-card');
-            const packageName = packageCard.querySelector('.package-name').textContent;
-            installPackage(packageName, installButton);
         }
     }
     
@@ -57,16 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadMoreButton = document.getElementById('load-more-btn');
     if (loadMoreButton) {
         loadMoreButton.addEventListener('click', function() {
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-            
-            // Simulate loading more packages
-            setTimeout(() => {
-                this.innerHTML = originalText;
-                
-                // In a real implementation, this would fetch more packages from the registry
-                alert('In a real implementation, this would load more packages from the registry.');
-            }, 1500);
+            loadMorePackages();
         });
     }
     
@@ -91,8 +69,19 @@ document.addEventListener('DOMContentLoaded', function() {
 async function loadPackages() {
     try {
         const packages = await getAllPackageDetails();
-        displayPackages(packages);
+        allPackages = packages;
+        displayedPackages = [...packages];
+        
+        displayPackages(packages.slice(0, packagesPerPage));
         displayFeaturedPackages(packages);
+        
+        // Hide load more button if all packages are displayed
+        const loadMoreButton = document.getElementById('load-more-btn');
+        if (packages.length <= packagesPerPage) {
+            loadMoreButton.style.display = 'none';
+        } else {
+            loadMoreButton.style.display = 'block';
+        }
     } catch (error) {
         console.error('Error loading packages:', error);
         document.getElementById('packages-grid').innerHTML = '<div class="error-message">Failed to load packages. Please try again later.</div>';
@@ -104,7 +93,7 @@ function displayPackages(packages) {
     const packagesGrid = document.getElementById('packages-grid');
     
     if (!packages || packages.length === 0) {
-        packagesGrid.innerHTML = '<div class="no-packages-message">No packages found in registry.</div>';
+        packagesGrid.innerHTML = '<div class="no-packages-message">No packages found.</div>';
         return;
     }
     
@@ -114,9 +103,11 @@ function displayPackages(packages) {
         packagesHTML += `
             <div class="package-card" data-package-name="${pkg.name}">
                 <div class="package-header">
-                    <div class="package-icon">
-                        <i class="${pkg.icon || 'fas fa-box-open'}"></i>
-                    </div>
+                    ${pkg.icon ? `
+                        <div class="package-icon">
+                            <i class="${pkg.icon}"></i>
+                        </div>
+                    ` : ''}
                     <div class="package-info">
                         <h3 class="package-name">${pkg.name}</h3>
                         <p class="package-author">by ${pkg.author}</p>
@@ -127,17 +118,21 @@ function displayPackages(packages) {
                 </p>
                 <div class="package-meta">
                     <span class="package-version">v${pkg.versions.latest}</span>
-                    ${pkg.downloads ? `<span class="package-downloads"><i class="fas fa-download"></i> ${formatDownloads(pkg.downloads)}</span>` : ''}
                 </div>
                 <div class="package-actions">
                     <button class="btn btn-secondary">Details</button>
-                    <button class="btn btn-primary">Install</button>
                 </div>
             </div>
         `;
     });
     
-    packagesGrid.innerHTML = packagesHTML;
+    // If this is the first load, replace the loading message
+    // Otherwise, append to existing packages
+    if (currentPage === 1) {
+        packagesGrid.innerHTML = packagesHTML;
+    } else {
+        packagesGrid.innerHTML += packagesHTML;
+    }
 }
 
 // Function to display featured packages
@@ -156,9 +151,11 @@ function displayFeaturedPackages(packages) {
             <div class="package-card featured" data-package-name="${featuredPkg.name}">
                 <div class="package-badge">Featured</div>
                 <div class="package-header">
-                    <div class="package-icon">
-                        <i class="${featuredPkg.icon || 'fas fa-star'}"></i>
-                    </div>
+                    ${featuredPkg.icon ? `
+                        <div class="package-icon">
+                            <i class="${featuredPkg.icon}"></i>
+                        </div>
+                    ` : ''}
                     <div class="package-info">
                         <h3 class="package-name">${featuredPkg.name}</h3>
                         <p class="package-author">by ${featuredPkg.author}</p>
@@ -169,11 +166,9 @@ function displayFeaturedPackages(packages) {
                 </p>
                 <div class="package-meta">
                     <span class="package-version">v${featuredPkg.versions.latest}</span>
-                    ${featuredPkg.downloads ? `<span class="package-downloads"><i class="fas fa-download"></i> ${formatDownloads(featuredPkg.downloads)}</span>` : ''}
                 </div>
                 <div class="package-actions">
                     <button class="btn btn-secondary">Details</button>
-                    <button class="btn btn-primary">Install</button>
                 </div>
             </div>
         `;
@@ -182,12 +177,49 @@ function displayFeaturedPackages(packages) {
     }
 }
 
-// Helper function to format download numbers
-function formatDownloads(downloads) {
-    if (downloads >= 1000) {
-        return (downloads / 1000).toFixed(1) + 'k';
+// Function to filter packages based on search term
+function filterPackages(searchTerm) {
+    if (!searchTerm) {
+        // If no search term, show all packages
+        displayedPackages = [...allPackages];
+        currentPage = 1;
+        displayPackages(displayedPackages.slice(0, packagesPerPage));
+    } else {
+        // Filter packages based on search term
+        displayedPackages = allPackages.filter(pkg => 
+            pkg.name.toLowerCase().includes(searchTerm) || 
+            pkg.author.toLowerCase().includes(searchTerm) || 
+            pkg.description.toLowerCase().includes(searchTerm)
+        );
+        
+        // Reset pagination and display filtered packages
+        currentPage = 1;
+        displayPackages(displayedPackages.slice(0, packagesPerPage));
     }
-    return downloads;
+    
+    // Show/hide load more button based on filtered results
+    const loadMoreButton = document.getElementById('load-more-btn');
+    if (displayedPackages.length <= packagesPerPage) {
+        loadMoreButton.style.display = 'none';
+    } else {
+        loadMoreButton.style.display = 'block';
+    }
+}
+
+// Function to load more packages
+function loadMorePackages() {
+    currentPage++;
+    const startIndex = (currentPage - 1) * packagesPerPage;
+    const endIndex = startIndex + packagesPerPage;
+    const packagesToDisplay = displayedPackages.slice(startIndex, endIndex);
+    
+    displayPackages(packagesToDisplay);
+    
+    // Hide load more button if all packages are displayed
+    const loadMoreButton = document.getElementById('load-more-btn');
+    if (endIndex >= displayedPackages.length) {
+        loadMoreButton.style.display = 'none';
+    }
 }
 
 // Function to show package details
@@ -211,9 +243,11 @@ async function showPackageDetails(packageName) {
             <div class="package-details">
                 <div class="package-details-main">
                     <div class="package-header">
-                        <div class="package-icon">
-                            <i class="${pkg.icon || 'fas fa-box-open'}"></i>
-                        </div>
+                        ${pkg.icon ? `
+                            <div class="package-icon">
+                                <i class="${pkg.icon}"></i>
+                            </div>
+                        ` : ''}
                         <div class="package-info">
                             <h2 class="package-name">${pkg.name}</h2>
                             <p class="package-author">by ${pkg.author}</p>
@@ -302,47 +336,4 @@ async function showPackageDetails(packageName) {
         console.error('Error loading package details:', error);
         alert('Failed to load package details. Please try again later.');
     }
-}
-
-// Function to install a package
-function installPackage(packageName, button) {
-    // Show loading state
-    const originalText = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Installing...';
-    button.disabled = true;
-    
-    // Simulate installation process
-    setTimeout(() => {
-        button.innerHTML = '<i class="fas fa-check"></i> Installed';
-        button.classList.remove('btn-primary');
-        button.classList.add('btn-secondary');
-        button.disabled = true;
-        
-        // Show success message
-        const successMessage = document.createElement('div');
-        successMessage.className = 'install-success';
-        successMessage.innerHTML = `
-            <i class="fas fa-check-circle"></i>
-            Successfully installed ${packageName}!
-            <button class="close-message">&times;</button>
-        `;
-        
-        document.body.appendChild(successMessage);
-        
-        // Auto-hide message after 3 seconds
-        setTimeout(() => {
-            successMessage.style.opacity = '0';
-            setTimeout(() => {
-                successMessage.remove();
-            }, 300);
-        }, 3000);
-        
-        // Close button for message
-        successMessage.querySelector('.close-message').addEventListener('click', function() {
-            successMessage.style.opacity = '0';
-            setTimeout(() => {
-                successMessage.remove();
-            }, 300);
-        });
-    }, 2000);
 }
