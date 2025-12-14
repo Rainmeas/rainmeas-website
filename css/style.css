@@ -1109,77 +1109,6 @@ code {
   color: var(--error-color);
 }
 
-.subscribe {
-  padding: 80px 0;
-  background: linear-gradient(135deg, var(--surface-color), var(--background-darker));
-  text-align: center;
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.subscribe-content {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.subscribe-title {
-  font-size: 2rem;
-  margin-bottom: 15px;
-}
-
-.subscribe-description {
-  color: var(--text-secondary);
-  margin-bottom: 30px;
-  font-size: 1.1rem;
-}
-
-.subscribe-form {
-  display: flex;
-  gap: 15px;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.subscribe-input {
-  flex: 1;
-  padding: 15px 20px;
-  border-radius: 30px;
-  border: 1px solid var(--border-color);
-  background: var(--surface-light);
-  color: var(--text-primary);
-  font-size: 1rem;
-}
-
-.subscribe-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
-}
-
-.subscribe-input.error {
-  border-color: var(--error-color);
-}
-
-.error-message {
-  color: var(--error-color);
-  font-size: 0.9rem;
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.subscribe-success {
-  background: rgba(76, 175, 80, 0.2);
-  color: var(--success-color);
-  padding: 15px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
 /* Modal Styles */
 .modal {
   display: none;
@@ -1448,9 +1377,7 @@ code {
     align-items: flex-start;
   }
   
-  .subscribe-form {
-    flex-direction: column;
-  }
+
 }
 
 @media screen and (max-width: 576px) {
