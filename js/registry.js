@@ -22,6 +22,13 @@ async function fetchPackageDetails(packageName) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        
+        // Add download count from GitHub API
+        const downloadCount = await getGitHubDownloadCount(data);
+        if (downloadCount !== null) {
+            data.downloadCount = downloadCount;
+        }
+        
         return data;
     } catch (error) {
         console.error(`Error fetching package details for ${packageName}:`, error);
@@ -44,6 +51,41 @@ async function getAllPackageDetails() {
         console.error('Error fetching all package details:', error);
         // Fallback to local data if GitHub fetch fails
         return getLocalAllPackageDetails();
+    }
+}
+
+// Function to get download count from GitHub API
+async function getGitHubDownloadCount(packageData) {
+    try {
+        // Extract owner and repo from homepage URL
+        if (!packageData.homepage) return null;
+        
+        const githubUrlMatch = packageData.homepage.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+        if (!githubUrlMatch) return null;
+        
+        const owner = githubUrlMatch[1];
+        const repo = githubUrlMatch[2];
+        
+        // Fetch releases data from GitHub API
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases`);
+        if (!response.ok) return null;
+        
+        const releases = await response.json();
+        
+        // Sum up download counts from all assets in all releases
+        let totalDownloads = 0;
+        for (const release of releases) {
+            if (release.assets) {
+                for (const asset of release.assets) {
+                    totalDownloads += asset.download_count || 0;
+                }
+            }
+        }
+        
+        return totalDownloads;
+    } catch (error) {
+        console.error('Error fetching download count from GitHub API:', error);
+        return null;
     }
 }
 

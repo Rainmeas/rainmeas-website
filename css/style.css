@@ -694,6 +694,10 @@ body {
 
 .package-downloads {
   color: var(--text-secondary);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .package-actions {

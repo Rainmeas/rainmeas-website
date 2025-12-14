@@ -66,6 +66,21 @@ async function displayPackageDetails(packageName) {
             .join(', ') || 'None';
         document.getElementById('package-versions').textContent = versionsList;
         
+        // Add download count if available
+        if (pkg.downloadCount !== undefined) {
+            const downloadItem = document.createElement('div');
+            downloadItem.className = 'package-detail-item';
+            downloadItem.innerHTML = `
+                <div class="package-detail-label">Downloads</div>
+                <div class="package-detail-value"><i class="fas fa-download"></i> ${pkg.downloadCount}</div>
+            `;
+            
+            // Insert before the last item (installation card)
+            const packageDetailCard = document.querySelector('.package-detail-card');
+            const lastItem = packageDetailCard.querySelector('.package-detail-item:last-child');
+            lastItem.parentNode.insertBefore(downloadItem, lastItem);
+        }
+        
         // Update installation command
         document.getElementById('install-command').textContent = 'rainmeas install ' + pkg.name;
         

@@ -105,6 +105,7 @@ function displayPackages(packages) {
                 </p>
                 <div class="package-meta">
                     <span class="package-version">v${pkg.versions.latest}</span>
+                    ${pkg.downloadCount !== undefined ? `<span class="package-downloads"><i class="fas fa-download"></i> ${pkg.downloadCount}</span>` : ''}
                 </div>
                 <div class="package-actions">
                     <button class="btn btn-secondary">View Details</button>
@@ -153,6 +154,7 @@ function displayFeaturedPackages(packages) {
                 </p>
                 <div class="package-meta">
                     <span class="package-version">v${featuredPkg.versions.latest}</span>
+                    ${featuredPkg.downloadCount !== undefined ? `<span class="package-downloads"><i class="fas fa-download"></i> ${featuredPkg.downloadCount}</span>` : ''}
                 </div>
                 <div class="package-actions">
                     <button class="btn btn-secondary">View Details</button>
