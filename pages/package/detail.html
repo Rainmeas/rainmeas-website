@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Details - Rainmeas</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="../../assets/rainmeas.png" alt="Rainmeas Logo" class="logo-img">
+                <span>Rainmeas</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="../../index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../packages.html" class="nav-link active">Packages</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../documentation.html" class="nav-link">Documentation</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../cli.html" class="nav-link">CLI Commands</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../changelog.html" class="nav-link">Changelog</a>
+                </li>
+            </ul>
+            <div class="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Package Detail Header -->
+    <section class="package-detail-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../packages.html">Packages</a> &gt; 
+                <span id="package-name-breadcrumb">Package Name</span>
+            </div>
+            <div class="package-header">
+                <!-- Package icon removed as per project specification -->
+                <div class="package-info">
+                    <h1 class="package-name" id="package-title">Package Name</h1>
+                    <p class="package-author" id="package-author">by Author</p>
+                </div>
+            </div>
+            
+            <div class="package-actions">
+                <a href="#" class="btn btn-secondary" id="github-link" target="_blank">
+                    <i class="fab fa-github"></i> View on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Package Content -->
+    <section class="package-content">
+        <div class="container">
+            <div class="package-content-layout">
+                <!-- Main Content -->
+                <div class="package-main-content">
+                    <div class="package-readme" id="package-readme">
+                        <div class="loading-message">
+                            <p>Loading package documentation...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sidebar -->
+                <div class="package-sidebar">
+                    <div class="package-detail-card">
+                        <h3>Package Information</h3>
+                        <div class="package-detail-item">
+                            <div class="package-detail-label">Version</div>
+                            <div class="package-detail-value" id="package-version">-</div>
+                        </div>
+                        
+                        <div class="package-detail-item">
+                            <div class="package-detail-label">License</div>
+                            <div class="package-detail-value" id="package-license">-</div>
+                        </div>
+                        
+                        <div class="package-detail-item">
+                            <div class="package-detail-label">Versions</div>
+                            <div class="package-detail-value" id="package-versions">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="package-install-card">
+                        <h3>Installation</h3>
+                        <p>Install this package using the Rainmeas CLI:</p>
+                        <div class="install-command">
+                            <code id="install-command">rainmeas install package-name</code>
+                            <button class="copy-command-btn" data-command-target="install-command">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="../../assets/rainmeas.png" alt="Rainmeas Logo" class="logo-img">
+                        <span>Rainmeas</span>
+                    </div>
+                    <p class="footer-description">
+                        The ultimate package manager for Rainmeter skins.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Navigation</h3>
+                    <ul class="footer-links">
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="../packages.html">Packages</a></li>
+                        <li><a href="../documentation.html">Documentation</a></li>
+                        <li><a href="../cli.html">CLI Commands</a></li>
+                        <li><a href="../changelog.html">Changelog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">GitHub Repository</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Connect</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Rainmeas. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script src="../../js/registry.js"></script>
+    <script src="../../js/package-detail.js"></script>
+</body>
+</html>

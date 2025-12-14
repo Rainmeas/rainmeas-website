@@ -75,7 +75,79 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const terminalCode = document.querySelector('.terminal-code');
     if (terminalCode) {
-        // This would be where we implement a typing animation if needed
-        // For now, we'll just ensure the code is displayed properly
+        // Store the original content
+        const originalContent = terminalCode.innerHTML;
+        
+        // Define the commands to type with timing
+        const lines = [
+            '$ rainmeas install freshweather',
+            'Installing freshweather...',
+            '✓ Successfully installed freshweather@1.3.0',
+            '$ rainmeas list',
+            'freshweather@1.3.0'
+        ];
+        
+        // Define classes for each line (null means no special class)
+        const lineClasses = [
+            null,
+            null,
+            'success',
+            null,
+            'output'
+        ];
+        
+        // Typing speed settings
+        const typeSpeed = 30; // milliseconds per character
+        
+        // Start the typing animation
+        let lineIndex = 0;
+        let charIndex = 0;
+        
+        function typeLine() {
+            if (lineIndex >= lines.length) {
+                // Animation completed, keep the final content
+                return;
+            }
+            
+            const currentLine = lines[lineIndex];
+            
+            if (charIndex <= currentLine.length) {
+                // Build content up to current line
+                let content = '';
+                for (let i = 0; i < lineIndex; i++) {
+                    const lineClass = lineClasses[i];
+                    if (lineClass) {
+                        content += `<span class="${lineClass}">${lines[i]}</span>`;
+                    } else {
+                        content += lines[i];
+                    }
+                    content += '\n';
+                }
+                
+                // Add current line being typed
+                const currentClass = lineClasses[lineIndex];
+                let currentLineContent = currentLine.substring(0, charIndex);
+                if (currentClass && charIndex > 0) {
+                    currentLineContent = `<span class="${currentClass}">${currentLineContent}</span>`;
+                }
+                content += currentLineContent;
+                
+                // Update terminal content
+                terminalCode.innerHTML = content;
+                
+                charIndex++;
+                setTimeout(typeLine, typeSpeed);
+            } else {
+                // Move to next line after a pause
+                setTimeout(() => {
+                    lineIndex++;
+                    charIndex = 0;
+                    typeLine();
+                }, 800);
+            }
+        }
+        
+        // Start typing after a short delay
+        setTimeout(typeLine, 1000);
     }
 });
