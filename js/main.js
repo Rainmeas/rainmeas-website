@@ -83,11 +83,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Define the commands to type with timing
         const lines = [
-            '$ rainmeas install freshweather',
-            'Installing freshweather...',
-            '✓ Successfully installed freshweather@1.3.0',
+            '$ rainmeas install nurashadeweather',
+            'Installing nurashadeweather...',
+            '✓ Successfully installed nurashadeweather@1.3.0',
             '$ rainmeas list',
-            'freshweather@1.3.0'
+            'nurashadeweather@1.3.0'
         ];
         
         // Define classes for each line (null means no special class)
