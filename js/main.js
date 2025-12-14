@@ -75,8 +75,11 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const terminalCode = document.querySelector('.terminal-code');
     if (terminalCode) {
-        // Store the original content
+        // Store the original content for graceful degradation
         const originalContent = terminalCode.innerHTML;
+        
+        // Clear the terminal initially to start with animation
+        terminalCode.innerHTML = '';
         
         // Define the commands to type with timing
         const lines = [
@@ -105,7 +108,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         function typeLine() {
             if (lineIndex >= lines.length) {
-                // Animation completed, keep the final content
+                // Animation completed, show the final content
+                terminalCode.innerHTML = originalContent;
                 return;
             }
             
@@ -147,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Start typing after a short delay
-        setTimeout(typeLine, 1000);
+        // Start typing immediately
+        typeLine();
     }
 });
