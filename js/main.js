@@ -85,9 +85,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const lines = [
             '$ rainmeas install nurashadeweather',
             'Installing nurashadeweather...',
-            '✓ Successfully installed nurashadeweather@1.3.0',
+            '✓ Successfully installed nurashadeweather@1.1.0',
             '$ rainmeas list',
-            'nurashadeweather@1.3.0'
+            'nurashadeweather@1.1.0'
         ];
         
         // Define classes for each line (null means no special class)
