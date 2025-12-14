@@ -9,13 +9,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetElement = document.querySelector(targetId);
             
             if (targetElement) {
+                // Account for fixed navbar height
+                const navbarHeight = 80;
+                const targetPosition = targetElement.offsetTop - navbarHeight;
+                
                 window.scrollTo({
-                    top: targetElement.offsetTop - 80,
+                    top: targetPosition,
                     behavior: 'smooth'
                 });
                 
                 // Update URL without page reload
                 history.pushState(null, null, targetId);
+                
+                // Manually trigger scroll event to update sidebar positioning
+                window.dispatchEvent(new Event('scroll'));
             }
         });
     });
@@ -36,22 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-    
-    // Sticky sidebar
-    const sidebar = document.querySelector('.sidebar-sticky');
-    if (sidebar) {
-        window.addEventListener('scroll', function() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const sidebarTop = 100;
-            
-            if (scrollTop > sidebarTop) {
-                sidebar.style.position = 'fixed';
-                sidebar.style.top = '20px';
-            } else {
-                sidebar.style.position = 'static';
-            }
-        });
-    }
     
     // Highlight current section in sidebar
     const sections = document.querySelectorAll('.cli-section');

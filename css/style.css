@@ -452,6 +452,8 @@ body {
   background-color: var(--background-darker);
   padding: 60px 0 30px;
   border-top: 1px solid var(--border-color);
+  position: relative;
+  z-index: 20;
 }
 
 .footer-content {
@@ -751,10 +753,12 @@ body {
   display: flex;
   gap: 40px;
   margin-top: 30px;
+  position: relative;
 }
 
 .docs-sidebar {
   flex: 0 0 250px;
+  position: relative;
 }
 
 .sidebar-sticky {
@@ -762,6 +766,10 @@ body {
   border-radius: 8px;
   padding: 25px;
   border: 1px solid var(--border-color);
+  position: -webkit-sticky; /* For Safari */
+  position: sticky;
+  top: 20px;
+  z-index: 10;
 }
 
 .sidebar-title {
@@ -915,10 +923,17 @@ code {
   display: flex;
   gap: 40px;
   margin-top: 30px;
+  position: relative;
 }
 
 .cli-sidebar {
   flex: 0 0 250px;
+  position: relative;
+}
+
+.cli-sidebar {
+  flex: 0 0 250px;
+  position: relative;
 }
 
 .cli-content {
@@ -1356,6 +1371,11 @@ code {
   .docs-sidebar,
   .cli-sidebar {
     width: 100%;
+  }
+  
+  .sidebar-sticky {
+    position: static;
+    top: auto;
   }
 }
 
