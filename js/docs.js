@@ -10,8 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (targetElement) {
                 // Account for fixed navbar height
-                const navbarHeight = 80;
-                const targetPosition = targetElement.offsetTop - navbarHeight;
+                const navbar = document.querySelector('.navbar');
+                const navbarHeight = navbar ? navbar.offsetHeight : 80;
+                
+                // Get the position of the target element relative to the document
+                const rect = targetElement.getBoundingClientRect();
+                const targetPosition = rect.top + window.pageYOffset - navbarHeight - 20; // Extra 20px spacing
                 
                 window.scrollTo({
                     top: targetPosition,
@@ -21,8 +25,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update URL without page reload
                 history.pushState(null, null, targetId);
                 
-                // Manually trigger scroll event to update sidebar positioning
-                window.dispatchEvent(new Event('scroll'));
+                // Manually trigger scroll event to update sidebar positioning after a small delay
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('scroll'));
+                }, 100);
             }
         });
     });
@@ -51,10 +57,14 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('scroll', function() {
         let current = '';
         
+        // Get navbar height for scroll position calculation
+        const navbar = document.querySelector('.navbar');
+        const navbarHeight = navbar ? navbar.offsetHeight : 80;
+        
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
             const sectionHeight = section.clientHeight;
-            const scrollPosition = window.pageYOffset + 100;
+            const scrollPosition = window.pageYOffset + navbarHeight + 20; // Account for navbar height and spacing
             
             if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
                 current = section.getAttribute('id');
