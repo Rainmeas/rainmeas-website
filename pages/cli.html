@@ -61,6 +61,7 @@
                         <ul class="sidebar-nav">
                             <li><a href="#init" class="sidebar-link">init</a></li>
                             <li><a href="#install" class="sidebar-link">install</a></li>
+                            <li><a href="#install" class="sidebar-link">i (alias for install)</a></li>
                             <li><a href="#remove" class="sidebar-link">remove</a></li>
                             <li><a href="#update" class="sidebar-link">update</a></li>
                             <li><a href="#list" class="sidebar-link">list</a></li>
@@ -113,17 +114,19 @@ Initialized Rainmeas in C:\Users\YourName\Documents\Rainmeter\Skins\MySkin">
                     <section id="install" class="cli-section">
                         <div class="command-header">
                             <h2 class="command-title">install</h2>
-                            <span class="command-syntax">rainmeas install &lt;package&gt;[@&lt;version&gt;]</span>
+                            <span class="command-syntax">rainmeas install [&lt;package&gt;[@&lt;version&gt;]]</span>
                         </div>
                         <p class="command-description">
-                            Install a package or a specific version of a package. If no version is specified, the latest version is installed.
+                            Install a package or a specific version of a package. If no package is specified, installs all packages listed in rainmeas-package.json in the current directory. If no version is specified, the latest version is installed.
                         </p>
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
-                                <pre><code class="language-bash">rainmeas install &lt;package&gt;
+                                <pre><code class="language-bash">rainmeas install
+rainmeas install &lt;package&gt;
 rainmeas install &lt;package&gt;@&lt;version&gt;</code></pre>
-                                <button class="copy-btn" data-copy="rainmeas install <package>
+                                <button class="copy-btn" data-copy="rainmeas install
+rainmeas install <package>
 rainmeas install <package>@<version>">
                                     <i class="fas fa-copy"></i>
                                 </button>
@@ -140,7 +143,13 @@ rainmeas install <package>@<version>">
                         <div class="command-example">
                             <h3>Examples</h3>
                             <div class="code-block">
-                                <pre><code class="language-bash"># Install the latest version
+                                <pre><code class="language-bash"># Install all packages from rainmeas-package.json
+$ rainmeas install
+Installing packages from rainmeas-package.json...
+✓ Successfully installed nurashadeweather@1.1.0
+✓ Successfully installed nurashade-reversegeo@1.0.0
+
+# Install the latest version of a specific package
 $ rainmeas install nurashadeweather
 Installing nurashadeweather...
 ✓ Successfully installed nurashadeweather@1.1.0
@@ -149,7 +158,13 @@ Installing nurashadeweather...
 $ rainmeas install nurashadeweather@1.0.0
 Installing nurashadeweather@1.0.0...
 ✓ Successfully installed nurashadeweather@1.0.0</code></pre>
-                                <button class="copy-btn" data-copy="# Install the latest version
+                                <button class="copy-btn" data-copy="# Install all packages from rainmeas-package.json
+$ rainmeas install
+Installing packages from rainmeas-package.json...
+✓ Successfully installed nurashadeweather@1.1.0
+✓ Successfully installed nurashade-reversegeo@1.0.0
+
+# Install the latest version of a specific package
 $ rainmeas install nurashadeweather
 Installing nurashadeweather...
 ✓ Successfully installed nurashadeweather@1.1.0
@@ -222,13 +237,6 @@ rainmeas update <package>">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
-                        </div>
-                        <div class="command-options">
-                            <h3>Options</h3>
-                            <ul class="docs-list">
-                                <li><code>--check</code> - Check for updates without installing</li>
-                                <li><code>--force</code> - Force update even if already up-to-date</li>
-                            </ul>
                         </div>
                         <div class="command-example">
                             <h3>Examples</h3>
@@ -373,23 +381,23 @@ climateview - Climate data and historical weather">
                             <h3>Example</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">$ rainmeas info nurashadeweather
-Name: nurashadeweather
-Version: 1.1.0
-Author: Someone123
-Description: A beautiful and customizable weather skin for Rainmeter with multiple themes and layouts.
-Homepage: https://github.com/someone123/nurashadeweather
-License: MIT
-Downloads: 12,500
-Dependencies: none</code></pre>
+Package: nurashadeweather
+Description: NuraShade Weather Measures is a collection of Rainmeter configuration [...]
+Author: nurashade
+License: Creative Commons Attribution-ShareAlike 3.0 Unported
+Homepage: https://github.com/NuraShade/NuraShadeWeather
+Latest version: 1.0.0
+Available versions: 1.0.0
+</code></pre>
                                 <button class="copy-btn" data-copy="$ rainmeas info nurashadeweather
-Name: nurashadeweather
-Version: 1.1.0
-Author: Someone123
-Description: A beautiful and customizable weather skin for Rainmeter with multiple themes and layouts.
-Homepage: https://github.com/someone123/nurashadeweather
-License: MIT
-Downloads: 12,500
-Dependencies: none">
+Package: nurashadeweather
+Description: NuraShade Weather Measures is a collection of Rainmeter configuration [...]
+Author: nurashade
+License: Creative Commons Attribution-ShareAlike 3.0 Unported
+Homepage: https://github.com/NuraShade/NuraShadeWeather
+Latest version: 1.0.0
+Available versions: 1.0.0"
+>
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -418,17 +426,19 @@ Dependencies: none">
                             <h3>Example</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">$ rainmeas verify
-Verifying packages...
-✓ nurashadeweather: OK
-✓ musicvisualizer: OK
-✓ systemmonitor: OK
-All packages verified successfully</code></pre>
+Verifying package integrity...
+✓ nurashadeweather@1.0.0 - OK
+✓ nurashade-reversegeo@1.0.0 - OK
+
+Verification summary: 2 verified, 0 missing
+</code></pre>
                                 <button class="copy-btn" data-copy="$ rainmeas verify
-Verifying packages...
-✓ nurashadeweather: OK
-✓ musicvisualizer: OK
-✓ systemmonitor: OK
-All packages verified successfully">
+Verifying package integrity...
+✓ nurashadeweather@1.0.0 - OK
+✓ nurashade-reversegeo@1.0.0 - OK
+
+Verification summary: 2 verified, 0 missing"
+>
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -453,27 +463,17 @@ All packages verified successfully">
                                 </button>
                             </div>
                         </div>
-                        <div class="command-options">
-                            <h3>Options</h3>
-                            <ul class="docs-list">
-                                <li><code>--cache</code> - Clean only the cache directory</li>
-                                <li><code>--modules</code> - Clean only unused modules</li>
-                                <li><code>--force</code> - Force cleaning without confirmation</li>
-                            </ul>
-                        </div>
                         <div class="command-example">
                             <h3>Example</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">$ rainmeas clean
-Cleaning unused modules...
-Removed 3 unused modules
-Cache cleaned successfully
-Freed 15.2 MB of disk space</code></pre>
+Removed unused module: nurashade-reversegeo
+Cleaned 1 unused modules
+</code></pre>
                                 <button class="copy-btn" data-copy="$ rainmeas clean
-Cleaning unused modules...
-Removed 3 unused modules
-Cache cleaned successfully
-Freed 15.2 MB of disk space">
+Removed unused module: nurashade-reversegeo
+Cleaned 1 unused modules"
+>
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -502,9 +502,10 @@ Freed 15.2 MB of disk space">
                             <h3>Example</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">$ rainmeas version
-Rainmeas CLI v1.2.3</code></pre>
+rainmeas 0.0.1
+</code></pre>
                                 <button class="copy-btn" data-copy="$ rainmeas version
-Rainmeas CLI v1.2.3">
+rainmeas 0.0.1">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
