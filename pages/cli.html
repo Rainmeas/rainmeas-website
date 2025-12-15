@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -16,21 +17,11 @@
                 <span>Rainmeas</span>
             </div>
             <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="../index.html" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="packages.html" class="nav-link">Packages</a>
-                </li>
-                <li class="nav-item">
-                    <a href="documentation.html" class="nav-link">Documentation</a>
-                </li>
-                <li class="nav-item">
-                    <a href="cli.html" class="nav-link active">CLI Commands</a>
-                </li>
-                <li class="nav-item">
-                    <a href="changelog.html" class="nav-link">Changelog</a>
-                </li>
+                <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="packages.html" class="nav-link">Packages</a></li>
+                <li class="nav-item"><a href="documentation.html" class="nav-link">Documentation</a></li>
+                <li class="nav-item"><a href="cli.html" class="nav-link active">CLI Commands</a></li>
+                <li class="nav-item"><a href="changelog.html" class="nav-link">Changelog</a></li>
             </ul>
             <div class="nav-toggle">
                 <span class="bar"></span>
@@ -54,7 +45,8 @@
     <section class="cli">
         <div class="container">
             <div class="cli-container">
-                <!-- Command List -->
+                
+                <!-- Sidebar Navigation -->
                 <aside class="cli-sidebar">
                     <div class="sidebar-sticky">
                         <h3 class="sidebar-title">Commands</h3>
@@ -75,8 +67,9 @@
                     </div>
                 </aside>
 
-                <!-- Command Details -->
+                <!-- Main Content -->
                 <main class="cli-content">
+                    
                     <!-- Init Command -->
                     <section id="init" class="cli-section">
                         <div class="command-header">
@@ -86,6 +79,7 @@
                         <p class="command-description">
                             Initialize Rainmeas in a Rainmeter skin directory. This creates the necessary configuration files and directories.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
@@ -95,15 +89,14 @@
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Example</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">$ cd C:\Users\YourName\Documents\Rainmeter\Skins\MySkin
 $ rainmeas init
-Initialized Rainmeas in C:\Users\YourName\Documents\Rainmeter\Skins\MySkin</code></pre>
-                                <button class="copy-btn" data-copy="cd C:\Users\YourName\Documents\Rainmeter\Skins\MySkin
-rainmeas init
-Initialized Rainmeas in C:\Users\YourName\Documents\Rainmeter\Skins\MySkin">
+Rainmeas initialized successfully</code></pre>
+                                <button class="copy-btn" data-copy="cd C:\Users\YourName\Documents\Rainmeter\Skins\MySkin&#10;rainmeas init&#10;Rainmeas initialized successfully">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -119,19 +112,19 @@ Initialized Rainmeas in C:\Users\YourName\Documents\Rainmeter\Skins\MySkin">
                         <p class="command-description">
                             Install a package or a specific version of a package. If no package is specified, installs all packages listed in rainmeas-package.json in the current directory. If no version is specified, the latest version is installed.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">rainmeas install
 rainmeas install &lt;package&gt;
 rainmeas install &lt;package&gt;@&lt;version&gt;</code></pre>
-                                <button class="copy-btn" data-copy="rainmeas install
-rainmeas install <package>
-rainmeas install <package>@<version>">
+                                <button class="copy-btn" data-copy="rainmeas install&#10;rainmeas install <package>&#10;rainmeas install <package>@<version>">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-options">
                             <h3>Options</h3>
                             <ul class="docs-list">
@@ -140,6 +133,7 @@ rainmeas install <package>@<version>">
                                 <li><code>--no-save</code> - Install without saving to dependencies</li>
                             </ul>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Examples</h3>
                             <div class="code-block">
@@ -158,21 +152,7 @@ Installing nurashadeweather...
 $ rainmeas install nurashadeweather@1.0.0
 Installing nurashadeweather@1.0.0...
 ✓ Successfully installed nurashadeweather@1.0.0</code></pre>
-                                <button class="copy-btn" data-copy="# Install all packages from rainmeas-package.json
-$ rainmeas install
-Installing packages from rainmeas-package.json...
-✓ Successfully installed nurashadeweather@1.1.0
-✓ Successfully installed nurashade-reversegeo@1.0.0
-
-# Install the latest version of a specific package
-$ rainmeas install nurashadeweather
-Installing nurashadeweather...
-✓ Successfully installed nurashadeweather@1.1.0
-
-# Install a specific version
-$ rainmeas install nurashadeweather@1.0.0
-Installing nurashadeweather@1.0.0...
-✓ Successfully installed nurashadeweather@1.0.0">
+                                <button class="copy-btn" data-copy="# Install all packages from rainmeas-package.json&#10;$ rainmeas install&#10;Installing packages from rainmeas-package.json...&#10;✓ Successfully installed nurashadeweather@1.1.0&#10;✓ Successfully installed nurashade-reversegeo@1.0.0&#10;&#10;# Install the latest version of a specific package&#10;$ rainmeas install nurashadeweather&#10;Installing nurashadeweather...&#10;✓ Successfully installed nurashadeweather@1.1.0&#10;&#10;# Install a specific version&#10;$ rainmeas install nurashadeweather@1.0.0&#10;Installing nurashadeweather@1.0.0...&#10;✓ Successfully installed nurashadeweather@1.0.0">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -188,6 +168,7 @@ Installing nurashadeweather@1.0.0...
                         <p class="command-description">
                             Remove an installed package and clean up associated files.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
@@ -197,21 +178,21 @@ Installing nurashadeweather@1.0.0...
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-options">
                             <h3>Options</h3>
                             <ul class="docs-list">
                                 <li><code>--force</code> - Force removal without confirmation</li>
                             </ul>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Example</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">$ rainmeas remove nurashadeweather
 Removing nurashadeweather...
 ✓ Successfully removed nurashadeweather</code></pre>
-                                <button class="copy-btn" data-copy="$ rainmeas remove nurashadeweather
-Removing nurashadeweather...
-✓ Successfully removed nurashadeweather">
+                                <button class="copy-btn" data-copy="$ rainmeas remove nurashadeweather&#10;Removing nurashadeweather...&#10;✓ Successfully removed nurashadeweather">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -227,17 +208,18 @@ Removing nurashadeweather...
                         <p class="command-description">
                             Update all packages or a specific package to the latest version.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">rainmeas update
 rainmeas update &lt;package&gt;</code></pre>
-                                <button class="copy-btn" data-copy="rainmeas update
-rainmeas update <package>">
+                                <button class="copy-btn" data-copy="rainmeas update&#10;rainmeas update <package>">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Examples</h3>
                             <div class="code-block">
@@ -251,16 +233,7 @@ Updating packages...
 $ rainmeas update nurashadeweather
 Updating nurashadeweather...
 ✓ Updated nurashadeweather from 1.0.0 to 1.1.0</code></pre>
-                                <button class="copy-btn" data-copy="# Update all packages
-$ rainmeas update
-Updating packages...
-✓ Updated nurashadeweather from 1.0.0 to 1.1.0
-✓ All packages are up to date
-
-# Update a specific package
-$ rainmeas update nurashadeweather
-Updating nurashadeweather...
-✓ Updated nurashadeweather from 1.0.0 to 1.1.0">
+                                <button class="copy-btn" data-copy="# Update all packages&#10;$ rainmeas update&#10;Updating packages...&#10;✓ Updated nurashadeweather from 1.0.0 to 1.1.0&#10;✓ All packages are up to date&#10;&#10;# Update a specific package&#10;$ rainmeas update nurashadeweather&#10;Updating nurashadeweather...&#10;✓ Updated nurashadeweather from 1.0.0 to 1.1.0">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -276,6 +249,7 @@ Updating nurashadeweather...
                         <p class="command-description">
                             List all installed packages and their versions.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
@@ -285,6 +259,7 @@ Updating nurashadeweather...
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-options">
                             <h3>Options</h3>
                             <ul class="docs-list">
@@ -292,6 +267,7 @@ Updating nurashadeweather...
                                 <li><code>--depth &lt;level&gt;</code> - Limit dependency tree depth</li>
                             </ul>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Example</h3>
                             <div class="code-block">
@@ -300,11 +276,7 @@ Installed packages:
 nurashadeweather@1.1.0
 musicvisualizer@2.1.4
 systemmonitor@3.0.1</code></pre>
-                                <button class="copy-btn" data-copy="$ rainmeas list
-Installed packages:
-nurashadeweather@1.1.0
-musicvisualizer@2.1.4
-systemmonitor@3.0.1">
+                                <button class="copy-btn" data-copy="$ rainmeas list&#10;Installed packages:&#10;nurashadeweather@1.1.0&#10;musicvisualizer@2.1.4&#10;systemmonitor@3.0.1">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -320,6 +292,7 @@ systemmonitor@3.0.1">
                         <p class="command-description">
                             Search for packages in the registry that match the query.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
@@ -329,6 +302,7 @@ systemmonitor@3.0.1">
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-options">
                             <h3>Options</h3>
                             <ul class="docs-list">
@@ -336,6 +310,7 @@ systemmonitor@3.0.1">
                                 <li><code>--sort &lt;field&gt;</code> - Sort by field (name, downloads, updated)</li>
                             </ul>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Example</h3>
                             <div class="code-block">
@@ -346,13 +321,7 @@ weatherplus - Advanced weather with forecast and alerts
 simpleweather - Minimalist weather display
 stormtracker - Severe weather alerts and radar
 climateview - Climate data and historical weather</code></pre>
-                                <button class="copy-btn" data-copy="$ rainmeas search weather
-Found 5 packages:
-nurashadeweather - Beautiful weather skin with multiple themes
-weatherplus - Advanced weather with forecast and alerts
-simpleweather - Minimalist weather display
-stormtracker - Severe weather alerts and radar
-climateview - Climate data and historical weather">
+                                <button class="copy-btn" data-copy="$ rainmeas search weather&#10;Found 5 packages:&#10;nurashadeweather - Beautiful weather skin with multiple themes&#10;weatherplus - Advanced weather with forecast and alerts&#10;simpleweather - Minimalist weather display&#10;stormtracker - Severe weather alerts and radar&#10;climateview - Climate data and historical weather">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -368,6 +337,7 @@ climateview - Climate data and historical weather">
                         <p class="command-description">
                             Display detailed information about a package.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
@@ -377,6 +347,7 @@ climateview - Climate data and historical weather">
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Example</h3>
                             <div class="code-block">
@@ -387,17 +358,8 @@ Author: nurashade
 License: Creative Commons Attribution-ShareAlike 3.0 Unported
 Homepage: https://github.com/NuraShade/NuraShadeWeather
 Latest version: 1.0.0
-Available versions: 1.0.0
-</code></pre>
-                                <button class="copy-btn" data-copy="$ rainmeas info nurashadeweather
-Package: nurashadeweather
-Description: NuraShade Weather Measures is a collection of Rainmeter configuration [...]
-Author: nurashade
-License: Creative Commons Attribution-ShareAlike 3.0 Unported
-Homepage: https://github.com/NuraShade/NuraShadeWeather
-Latest version: 1.0.0
-Available versions: 1.0.0"
->
+Available versions: 1.0.0</code></pre>
+                                <button class="copy-btn" data-copy="$ rainmeas info nurashadeweather&#10;Package: nurashadeweather&#10;Description: NuraShade Weather Measures is a collection of Rainmeter configuration [...]&#10;Author: nurashade&#10;License: Creative Commons Attribution-ShareAlike 3.0 Unported&#10;Homepage: https://github.com/NuraShade/NuraShadeWeather&#10;Latest version: 1.0.0&#10;Available versions: 1.0.0">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -413,6 +375,7 @@ Available versions: 1.0.0"
                         <p class="command-description">
                             Verify the integrity of installed packages and configuration files.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
@@ -422,6 +385,7 @@ Available versions: 1.0.0"
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Example</h3>
                             <div class="code-block">
@@ -430,15 +394,8 @@ Verifying package integrity...
 ✓ nurashadeweather@1.0.0 - OK
 ✓ nurashade-reversegeo@1.0.0 - OK
 
-Verification summary: 2 verified, 0 missing
-</code></pre>
-                                <button class="copy-btn" data-copy="$ rainmeas verify
-Verifying package integrity...
-✓ nurashadeweather@1.0.0 - OK
-✓ nurashade-reversegeo@1.0.0 - OK
-
-Verification summary: 2 verified, 0 missing"
->
+Verification summary: 2 verified, 0 missing</code></pre>
+                                <button class="copy-btn" data-copy="$ rainmeas verify&#10;Verifying package integrity...&#10;✓ nurashadeweather@1.0.0 - OK&#10;✓ nurashade-reversegeo@1.0.0 - OK&#10;&#10;Verification summary: 2 verified, 0 missing">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -454,6 +411,7 @@ Verification summary: 2 verified, 0 missing"
                         <p class="command-description">
                             Remove unused modules and clean up the cache.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
@@ -463,17 +421,14 @@ Verification summary: 2 verified, 0 missing"
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Example</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">$ rainmeas clean
 Removed unused module: nurashade-reversegeo
-Cleaned 1 unused modules
-</code></pre>
-                                <button class="copy-btn" data-copy="$ rainmeas clean
-Removed unused module: nurashade-reversegeo
-Cleaned 1 unused modules"
->
+Cleaned 1 unused modules</code></pre>
+                                <button class="copy-btn" data-copy="$ rainmeas clean&#10;Removed unused module: nurashade-reversegeo&#10;Cleaned 1 unused modules">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -489,6 +444,7 @@ Cleaned 1 unused modules"
                         <p class="command-description">
                             Display the current version of Rainmeas CLI.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
@@ -498,14 +454,13 @@ Cleaned 1 unused modules"
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Example</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">$ rainmeas version
-rainmeas 0.0.1
-</code></pre>
-                                <button class="copy-btn" data-copy="$ rainmeas version
-rainmeas 0.0.1">
+rainmeas 0.0.1</code></pre>
+                                <button class="copy-btn" data-copy="$ rainmeas version&#10;rainmeas 0.0.1">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
@@ -521,17 +476,18 @@ rainmeas 0.0.1">
                         <p class="command-description">
                             Display help information for all commands or a specific command.
                         </p>
+                        
                         <div class="command-usage">
                             <h3>Usage</h3>
                             <div class="code-block">
                                 <pre><code class="language-bash">rainmeas help
 rainmeas help &lt;command&gt;</code></pre>
-                                <button class="copy-btn" data-copy="rainmeas help
-rainmeas help <command>">
+                                <button class="copy-btn" data-copy="rainmeas help&#10;rainmeas help <command>">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="command-example">
                             <h3>Example</h3>
                             <div class="code-block">
@@ -552,28 +508,13 @@ Commands:
   help       Show help
 
 Run 'rainmeas help <command>' for more information on a specific command.</code></pre>
-                                <button class="copy-btn" data-copy="$ rainmeas help
-Usage: rainmeas [command] [options]
-
-Commands:
-  init       Initialize Rainmeas in a directory
-  install    Install a package
-  remove     Remove a package
-  update     Update packages
-  list       List installed packages
-  search     Search for packages
-  info       Show package information
-  verify     Verify package integrity
-  clean      Clean unused modules
-  version    Show CLI version
-  help       Show help
-
-Run 'rainmeas help <command>' for more information on a specific command.">
+                                <button class="copy-btn" data-copy="$ rainmeas help&#10;Usage: rainmeas [command] [options]&#10;&#10;Commands:&#10;  init       Initialize Rainmeas in a directory&#10;  install    Install a package&#10;  remove     Remove a package&#10;  update     Update packages&#10;  list       List installed packages&#10;  search     Search for packages&#10;  info       Show package information&#10;  verify     Verify package integrity&#10;  clean      Clean unused modules&#10;  version    Show CLI version&#10;  help       Show help&#10;&#10;Run 'rainmeas help <command>' for more information on a specific command.">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
                         </div>
                     </section>
+
                 </main>
             </div>
         </div>
@@ -592,6 +533,7 @@ Run 'rainmeas help <command>' for more information on a specific command.">
                         The ultimate package manager for Rainmeter skins.
                     </p>
                 </div>
+                
                 <div class="footer-section">
                     <h3 class="footer-title">Navigation</h3>
                     <ul class="footer-links">
@@ -602,19 +544,22 @@ Run 'rainmeas help <command>' for more information on a specific command.">
                         <li><a href="changelog.html">Changelog</a></li>
                     </ul>
                 </div>
+                
                 <div class="footer-section">
                     <h3 class="footer-title">Resources</h3>
                     <ul class="footer-links">
                         <li><a href="#">GitHub Repository</a></li>
                     </ul>
                 </div>
+                
                 <div class="footer-section">
                     <h3 class="footer-title">Connect</h3>
                     <div class="social-icons">
-                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
                     </div>
                 </div>
             </div>
+            
             <div class="footer-bottom">
                 <p>&copy; 2025 Rainmeas. All rights reserved.</p>
             </div>
