@@ -33,6 +33,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Animate sections on scroll
+    const docSections = document.querySelectorAll('.docs-section');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    docSections.forEach(section => {
+        observer.observe(section);
+    });
+    
     // Copy to clipboard functionality
     const copyButtons = document.querySelectorAll('.copy-btn');
     copyButtons.forEach(button => {
@@ -40,11 +55,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const code = this.getAttribute('data-copy');
             navigator.clipboard.writeText(code).then(() => {
                 // Show feedback
+                this.classList.add('copied');
                 const originalIcon = this.innerHTML;
                 this.innerHTML = '<i class="fas fa-check"></i>';
                 
                 setTimeout(() => {
                     this.innerHTML = originalIcon;
+                    this.classList.remove('copied');
                 }, 2000);
             });
         });
