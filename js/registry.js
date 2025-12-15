@@ -108,7 +108,7 @@ function getLocalPackageData(packageName) {
         "nurashade-reversegeo": {
             "name": "nurashade-reversegeo",
             "author": "nurashade",
-            "description": "NuraShade Reverse Geo is a Rainmeter configuration component that provides reverse geocoding capabilities using the BigDataCloud API. Given a latitude and longitude, it retrieves detailed location information including country, city, subdivision, continent, postcode, and more. This package is designed to complement the NuraShade weather suite and enhance location-based displays in Rainmeter skins.",
+            "description": "NuraShade Reverse Geo is a Rainmeter configuration component that provides reverse geocoding capabilities using the BigDataCloud API. Given a latitude and longitude, it retrieves detailed location information including country, city, subdivision, continent, postcode, and more. This package is designed to complement the NuraShade weather suite and enhance location-based displays in Rainmeter modules.",
             "homepage": "https://github.com/NuraShade/NuraShadeReverseGeo",
             "license": "Creative Commons Attribution-ShareAlike 3.0 Unported",
             "versions": {

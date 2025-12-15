@@ -1,13 +1,13 @@
 # Rainmeas Website
 
-This is the official website for Rainmeas, a package manager for Rainmeter skins that simplifies the installation, updating, and management of skin modules.
+This is the official website for Rainmeas, a package manager for Rainmeter modules that simplifies the installation, updating, and management of reusable components.
 
 ## Website Structure
 
 The website consists of the following pages:
 
 1. **Home** ([index.html](index.html)) - Main landing page with overview of Rainmeas features
-2. **Packages** ([packages.html](packages.html)) - Browse available Rainmeter skin packages
+2. **Packages** ([packages.html](packages.html)) - Browse available Rainmeter modules
 3. **Documentation** ([documentation.html](documentation.html)) - Comprehensive guide to using Rainmeas
 4. **CLI Commands** ([cli.html](cli.html)) - Detailed reference for all command-line interface commands
 5. **Changelog** ([changelog.html](changelog.html)) - Version history and release notes
