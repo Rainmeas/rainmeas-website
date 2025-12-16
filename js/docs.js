@@ -1,41 +1,8 @@
 // Documentation page functionality
 document.addEventListener('DOMContentLoaded', function() {
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                // Account for fixed navbar height
-                const navbar = document.querySelector('.navbar');
-                const navbarHeight = navbar ? navbar.offsetHeight : 80;
-                
-                // Get the position of the target element relative to the document
-                const rect = targetElement.getBoundingClientRect();
-                const targetPosition = rect.top + window.pageYOffset - navbarHeight - 20; // Extra 20px spacing
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-                
-                // Update URL without page reload
-                history.pushState(null, null, targetId);
-                
-                // Manually trigger scroll event to update sidebar positioning after a small delay
-                setTimeout(() => {
-                    window.dispatchEvent(new Event('scroll'));
-                }, 100);
-            }
-        });
-    });
-    
     // Animate sections on scroll
     const docSections = document.querySelectorAll('.docs-section');
-    const cliSections = document.querySelectorAll('.cli-section');
+    const cliSectionsList = document.querySelectorAll('.cli-section');
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -49,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(section);
     });
     
-    cliSections.forEach(section => {
+    cliSectionsList.forEach(section => {
         observer.observe(section);
     });
     
@@ -72,34 +39,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Highlight current section in sidebar
+    // Highlight current section in sidebar for single-page docs
     const docsSections = document.querySelectorAll('.docs-section');
     const cliSections = document.querySelectorAll('.cli-section');
     const allSections = [...docsSections, ...cliSections];
     const sidebarLinks = document.querySelectorAll('.sidebar-link');
     
-    window.addEventListener('scroll', function() {
-        let current = '';
-        
-        // Get navbar height for scroll position calculation
-        const navbar = document.querySelector('.navbar');
-        const navbarHeight = navbar ? navbar.offsetHeight : 80;
-        
-        allSections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            const scrollPosition = window.pageYOffset + navbarHeight + 20; // Account for navbar height and spacing
+    if (allSections.length > 0) {
+        window.addEventListener('scroll', function() {
+            let current = '';
             
-            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                current = section.getAttribute('id');
-            }
+            // Get navbar height for scroll position calculation
+            const navbar = document.querySelector('.navbar');
+            const navbarHeight = navbar ? navbar.offsetHeight : 80;
+            
+            allSections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                const scrollPosition = window.pageYOffset + navbarHeight + 20; // Account for navbar height and spacing
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            sidebarLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
         });
-        
-        sidebarLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${current}`) {
-                link.classList.add('active');
-            }
-        });
-    });
+    }
 });
