@@ -37,6 +37,7 @@
 .code-block pre code {
   color: var(--codeblock-text-primary);
   font-family: 'Courier New', monospace;
+  background-color: transparent;
 }
 
 .code-block pre code.language-bash {
@@ -54,8 +55,8 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  background: var(--codeblock-surface-light);
-  border: 1px solid var(--codeblock-border-color);
+  background: transparent;
+  border: none;
   color: var(--codeblock-text-secondary);
   width: 40px;
   height: 40px;
@@ -65,21 +66,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  animation: pulse 2s infinite;
+  box-shadow: none;
 }
 
 .copy-btn:hover {
-  background: linear-gradient(135deg, #8a2be2, #4b0082);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4);
+  background: transparent;
+  color: var(--codeblock-accent-color);
+  transform: scale(1.1);
+  box-shadow: none;
   animation: none;
 }
 
 .copy-btn.copied {
-  background: var(--codeblock-success-color);
-  color: white;
+  background: transparent;
+  color: var(--codeblock-success-color);
   animation: none;
 }
 

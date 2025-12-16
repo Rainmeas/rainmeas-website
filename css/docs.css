@@ -226,6 +226,14 @@ code {
   color: var(--accent-color);
 }
 
+pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+}
+
 
 
 /* Responsive Design */
