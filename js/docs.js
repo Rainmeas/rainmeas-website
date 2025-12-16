@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Animate sections on scroll
     const docSections = document.querySelectorAll('.docs-section');
+    const cliSections = document.querySelectorAll('.cli-section');
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -45,6 +46,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { threshold: 0.1 });
     
     docSections.forEach(section => {
+        observer.observe(section);
+    });
+    
+    cliSections.forEach(section => {
         observer.observe(section);
     });
     
@@ -68,7 +73,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Highlight current section in sidebar
-    const sections = document.querySelectorAll('.docs-section');
+    const docsSections = document.querySelectorAll('.docs-section');
+    const cliSections = document.querySelectorAll('.cli-section');
+    const allSections = [...docsSections, ...cliSections];
     const sidebarLinks = document.querySelectorAll('.sidebar-link');
     
     window.addEventListener('scroll', function() {
@@ -78,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const navbar = document.querySelector('.navbar');
         const navbarHeight = navbar ? navbar.offsetHeight : 80;
         
-        sections.forEach(section => {
+        allSections.forEach(section => {
             const sectionTop = section.offsetTop;
             const sectionHeight = section.clientHeight;
             const scrollPosition = window.pageYOffset + navbarHeight + 20; // Account for navbar height and spacing
