@@ -1,0 +1,122 @@
+/* Code Block - Standalone Component */
+:root {
+  /* Code Block Color definitions */
+  --codeblock-surface-color: #1e1e1e;
+  --codeblock-surface-light: #2d2d2d;
+  --codeblock-background-darker: #0a0a0a;
+  --codeblock-border-color: #333333;
+  --codeblock-text-primary: #ffffff;
+  --codeblock-text-secondary: #b3b3b3;
+  --codeblock-accent-color: #00bfff;
+  --codeblock-success-color: #4caf50;
+  --codeblock-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --codeblock-transition: all 0.3s ease;
+}
+
+.code-block {
+  position: relative;
+  background: var(--codeblock-surface-color);
+  border: 1px solid var(--codeblock-border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--codeblock-shadow);
+  margin: 20px 0;
+}
+
+.code-block pre {
+  margin: 0;
+  padding: 20px;
+  background: var(--codeblock-background-darker);
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--codeblock-text-primary);
+}
+
+.code-block pre code {
+  color: var(--codeblock-text-primary);
+  font-family: 'Courier New', monospace;
+}
+
+.code-block pre code.language-bash {
+  color: var(--codeblock-text-primary);
+}
+
+.code-block pre code.language-bash::before {
+  content: '$ ';
+  color: var(--codeblock-accent-color);
+  font-weight: bold;
+}
+
+/* Copy Button Styles */
+.copy-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--codeblock-surface-light);
+  border: 1px solid var(--codeblock-border-color);
+  color: var(--codeblock-text-secondary);
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--codeblock-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
+}
+
+.copy-btn:hover {
+  background: linear-gradient(135deg, #8a2be2, #4b0082);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4);
+  animation: none;
+}
+
+.copy-btn.copied {
+  background: var(--codeblock-success-color);
+  color: white;
+  animation: none;
+}
+
+.copy-btn .copy-btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Copy Button Icon Styles */
+.copy-btn-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.copy-icon {
+  background-image: url('../../assets/icons/copy.png');
+}
+
+.checkmark-icon {
+  background-image: url('../../assets/icons/checkmark.png');
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .code-block pre {
+    padding: 15px;
+    font-size: 0.85rem;
+  }
+  
+  .copy-btn {
+    width: 35px;
+    height: 35px;
+    top: 10px;
+    right: 10px;
+  }
+}

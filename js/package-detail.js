@@ -103,22 +103,7 @@ async function displayPackageDetails(packageName) {
             document.getElementById('package-readme').innerHTML = '<p>' + pkg.description + '</p>';
         }
         
-        // Set up copy button
-        const copyButton = document.querySelector('.copy-command-btn');
-        copyButton.addEventListener('click', function() {
-            const command = document.getElementById('install-command').textContent;
-            navigator.clipboard.writeText(command).then(() => {
-                // Show feedback
-                const originalIcon = this.innerHTML;
-                this.innerHTML = '<span class="copy-btn-icon checkmark-icon"></span>';
-                
-                setTimeout(() => {
-                    this.innerHTML = originalIcon;
-                }, 2000);
-            });
-        });
-        
-    } catch (error) {
+            } catch (error) {
         console.error('Error loading package details:', error);
         document.getElementById('package-readme').innerHTML = '<div class="error-message">Failed to load package details. Please try again later.</div>';
     }

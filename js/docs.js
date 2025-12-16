@@ -14,26 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     docSections.forEach(section => {
         observer.observe(section);
     });
-    
-    // Copy to clipboard functionality
-    const copyButtons = document.querySelectorAll('.copy-btn');
-    copyButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const code = this.getAttribute('data-copy');
-            navigator.clipboard.writeText(code).then(() => {
-                // Show feedback
-                this.classList.add('copied');
-                const originalIcon = this.innerHTML;
-                this.innerHTML = '<span class="copy-btn-icon checkmark-icon"></span>';
-                
-                setTimeout(() => {
-                    this.innerHTML = originalIcon;
-                    this.classList.remove('copied');
-                }, 2000);
-            });
-        });
-    });
-    
+
     // Highlight current section in sidebar for single-page docs
     const docsSections = document.querySelectorAll('.docs-section');
     const allSections = [...docsSections];
