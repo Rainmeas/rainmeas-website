@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Get Started - Rainmeas</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <img
+            src="../assets/rainmeas.png"
+            alt="Rainmeas Logo"
+            class="logo-img"
+          />
+          <span>Rainmeas</span>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="../index.html" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="packages.html" class="nav-link">Packages</a>
+          </li>
+          <li class="nav-item">
+            <a href="documentation.html" class="nav-link active"
+              >Documentation</a
+            >
+          </li>
+          <li class="nav-item">
+            <a href="cli.html" class="nav-link">CLI Commands</a>
+          </li>
+          <li class="nav-item">
+            <a href="changelog.html" class="nav-link">Changelog</a>
+          </li>
+        </ul>
+        <div class="nav-toggle">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Get Started Header -->
+    <section class="documentation-header">
+      <div class="container">
+        <h1 class="section-title">Get Started</h1>
+        <p class="section-description">
+          Learn how to install and set up Rainmeas to begin managing your Rainmeter modules.
+        </p>
+      </div>
+    </section>
+
+    <!-- Get Started Content -->
+    <section class="documentation">
+      <div class="container">
+        <div class="docs-container">
+          <!-- Sidebar -->
+          <aside class="docs-sidebar">
+            <div class="sidebar-sticky">
+              <h3 class="sidebar-title">Get Started</h3>
+              <ul class="sidebar-nav">
+                <li>
+                  <a href="#prerequisites" class="sidebar-link"
+                    >Prerequisites</a
+                  >
+                </li>
+                <li>
+                  <a href="#installation" class="sidebar-link">Installation</a>
+                </li>
+                <li>
+                  <a href="#initialization" class="sidebar-link">Initialization</a>
+                </li>
+                <li>
+                  <a href="#first-package" class="sidebar-link"
+                    >Installing Your First Package</a
+                  >
+                </li>
+                <li>
+                  <a href="#next-steps" class="sidebar-link">Next Steps</a>
+                </li>
+              </ul>
+            </div>
+          </aside>
+
+          <!-- Main Content -->
+          <main class="docs-content">
+            <!-- Prerequisites -->
+            <section id="prerequisites" class="docs-section">
+              <h2 class="docs-title">Prerequisites</h2>
+              <p>
+                Before installing Rainmeas, ensure you have the following:
+              </p>
+              <ul class="docs-list">
+                <li>
+                  <strong>Rainmeter</strong> - Rainmeas works with Rainmeter 4.3 or later.
+                  Download it from the 
+                  <a href="https://www.rainmeter.net/" target="_blank">official website</a>.
+                </li>
+                <li>
+                  <strong>Windows</strong> - Rainmeas is designed for Windows operating systems.
+                </li>
+                <li>
+                  <strong>Internet Connection</strong> - Required for downloading packages from the registry.
+                </li>
+              </ul>
+            </section>
+
+            <!-- Installation -->
+            <section id="installation" class="docs-section">
+              <h2 class="docs-title">Installation</h2>
+              
+              <h3>Using the Installer (Recommended)</h3>
+              <p>
+                Download the latest installer (<code>rainmeas-setup.exe</code>)
+                from the
+                <a href="#" target="_blank">releases page</a> and run it to
+                install Rainmeas with automatic PATH integration.
+              </p>
+              
+              <h3>Manual Installation</h3>
+              <p>
+                If you prefer manual installation:
+              </p>
+              <ol class="docs-list">
+                <li>
+                  Ensure you have Python 3.7 or later installed on your system
+                </li>
+                <li>
+                  Clone the Rainmeas repository or download the source code
+                </li>
+                <li>
+                  Navigate to the project directory and install dependencies:
+                  <div class="code-block">
+                    <pre><code class="language-bash">pip install -r requirements.txt</code></pre>
+                    <button class="copy-btn" data-copy="pip install -r requirements.txt">
+                      <i class="fas fa-copy"></i>
+                    </button>
+                  </div>
+                </li>
+                <li>
+                  Run the setup script:
+                  <div class="code-block">
+                    <pre><code class="language-bash">python setup.py install</code></pre>
+                    <button class="copy-btn" data-copy="python setup.py install">
+                      <i class="fas fa-copy"></i>
+                    </button>
+                  </div>
+                </li>
+              </ol>
+            </section>
+
+            <!-- Initialization -->
+            <section id="initialization" class="docs-section">
+              <h2 class="docs-title">Initialization</h2>
+              <p>
+                After installing Rainmeas, initialize it in your Rainmeter modules directory:
+              </p>
+              <div class="code-block">
+                <pre><code class="language-bash">rainmeas init</code></pre>
+                <button class="copy-btn" data-copy="rainmeas init">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              <p>
+                This command creates the necessary configuration files and directories for 
+                managing your packages.
+              </p>
+            </section>
+
+            <!-- First Package -->
+            <section id="first-package" class="docs-section">
+              <h2 class="docs-title">Installing Your First Package</h2>
+              <p>
+                Once initialized, you can install packages from the registry:
+              </p>
+              <div class="code-block">
+                <pre><code class="language-bash">rainmeas install nurashadeweather</code></pre>
+                <button
+                  class="copy-btn"
+                  data-copy="rainmeas install nurashadeweather"
+                >
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              <p>
+                This will download and install the "nurashadeweather" package to your 
+                Rainmeter modules directory.
+              </p>
+            </section>
+
+            <!-- Next Steps -->
+            <section id="next-steps" class="docs-section">
+              <h2 class="docs-title">Next Steps</h2>
+              <p>
+                Now that you have Rainmeas installed and initialized, explore these resources:
+              </p>
+              <ul class="docs-list">
+                <li>
+                  <a href="cli.html">CLI Commands Reference</a> - Complete guide to all Rainmeas commands
+                </li>
+                <li>
+                  <a href="packages.html">Available Packages</a> - Browse the package registry
+                </li>
+                <li>
+                  <a href="documentation.html">Advanced Topics</a> - Learn about configuration, troubleshooting, and more
+                </li>
+              </ul>
+            </section>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <div class="footer-logo">
+              <img
+                src="../assets/rainmeas.png"
+                alt="Rainmeas Logo"
+                class="logo-img"
+              />
+              <span>Rainmeas</span>
+            </div>
+            <p class="footer-description">
+              The ultimate package manager for Rainmeter modules.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3 class="footer-title">Navigation</h3>
+            <ul class="footer-links">
+              <li><a href="../index.html">Home</a></li>
+              <li><a href="packages.html">Packages</a></li>
+              <li><a href="documentation.html">Documentation</a></li>
+              <li><a href="cli.html">CLI Commands</a></li>
+              <li><a href="changelog.html">Changelog</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3 class="footer-title">Resources</h3>
+            <ul class="footer-links">
+              <li><a href="#">GitHub Repository</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3 class="footer-title">Connect</h3>
+            <div class="social-icons">
+              <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Rainmeas. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/docs.js"></script>
+  </body>
+</html>

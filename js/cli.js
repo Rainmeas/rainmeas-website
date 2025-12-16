@@ -1,7 +1,7 @@
-// Documentation page functionality
+// CLI Commands page functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Animate sections on scroll
-    const docSections = document.querySelectorAll('.docs-section');
+    const cliSections = document.querySelectorAll('.cli-section');
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, { threshold: 0.1 });
     
-    docSections.forEach(section => {
+    cliSections.forEach(section => {
         observer.observe(section);
     });
     
@@ -35,8 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Highlight current section in sidebar for single-page docs
-    const docsSections = document.querySelectorAll('.docs-section');
-    const allSections = [...docsSections];
+    const allSections = [...cliSections];
     const sidebarLinks = document.querySelectorAll('.sidebar-link');
     
     if (allSections.length > 0) {
