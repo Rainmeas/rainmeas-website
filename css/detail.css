@@ -1,0 +1,235 @@
+.package-detail-header {
+  padding: 120px 0 40px;
+}
+.breadcrumb {
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.breadcrumb a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb span {
+  color: var(--text-secondary);
+}
+
+.package-detail-header .package-header {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.package-detail-header .package-actions {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+@media screen and (max-width: 576px) {
+  .package-detail-header .package-actions {
+    flex-direction: column;
+  }
+}
+
+.package-content {
+  padding: 40px 0;
+}
+
+.package-content-layout {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 40px;
+}@media screen and (max-width: 992px) {
+  .package-content-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.package-main-content {
+  background: var(--surface-color);
+  border-radius: 8px;
+  padding: 30px;
+  border: 1px solid var(--border-color);
+}
+
+.package-readme h1,
+.package-readme h2,
+.package-readme h3 {
+  margin: 1.5rem 0 1rem;
+  color: var(--text-primary);
+}
+
+.package-readme h1 {
+  font-size: 2rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.package-readme h2 {
+  font-size: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.package-readme h3 {
+  font-size: 1.2rem;
+}
+
+.package-readme p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.package-readme a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.package-readme a:hover {
+  text-decoration: underline;
+}
+
+.package-readme code {
+  background: var(--background-darker);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+}.package-readme pre {
+  background: var(--background-darker);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  border: 1px solid var(--border-color);
+}
+
+.package-readme pre code {
+  background: none;
+  padding: 0;
+}
+
+.package-readme ul,
+.package-readme ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.package-readme li {
+  margin-bottom: 0.5rem;
+}
+
+.package-readme blockquote {
+  border-left: 4px solid var(--primary-color);
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  background: var(--surface-light);
+  border-radius: 0 4px 4px 0;
+}
+
+.package-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.package-detail-card,
+.package-install-card {
+  background: var(--surface-color);
+  border-radius: 8px;
+  padding: 25px;
+  border: 1px solid var(--border-color);
+}
+
+.package-detail-card h3,
+.package-install-card h3 {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.package-detail-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.package-detail-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.package-detail-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.package-detail-value {
+  font-weight: 500;
+  text-align: right;
+}
+
+.code-block pre {
+  margin: 0;
+  border-radius: 8px 8px 0 0;
+  font-size: 0.85rem;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.error-message {
+  color: var(--error-color);
+}
+
+.install-command {
+  background: var(--background-darker);
+  padding: 15px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  margin: 15px 0;
+  position: relative;
+  border: 1px solid var(--border-color);
+}
+
+/* Responsive design for code blocks */
+@media (max-width: 768px) {
+  .code-block pre {
+    font-size: 0.75rem;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  
+  .package-readme code {
+    font-size: 0.7rem;
+  }
+  
+  .package-readme pre {
+    padding: 15px;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
