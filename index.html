@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rainmeas - Package Manager for Rainmeter Skins</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components/CodeTerminal.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -64,7 +65,7 @@
                         <div class="terminal-title">Command Prompt</div>
                     </div>
                     <div class="terminal-body">
-                        <pre><code class="terminal-code">$ rainmeas install nurashadeweather
+                        <pre><code class="terminal-code" data-terminal-lines='["$ rainmeas install nurashadeweather", "Installing nurashadeweather...", "✓ Successfully installed nurashadeweather@1.1.0", "$ rainmeas list", "nurashadeweather@1.1.0"]' data-line-classes='[null, null, "success", null, "output"]'>$ rainmeas install nurashadeweather
 Installing nurashadeweather...
 <span class="success">✓ Successfully installed nurashadeweather@1.1.0</span>
 $ rainmeas list
@@ -210,6 +211,7 @@ $ rainmeas list
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script src="js/components/CodeTerminal.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
