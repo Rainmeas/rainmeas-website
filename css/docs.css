@@ -299,6 +299,11 @@
   animation: none;
 }
 
+.copy-btn .copy-btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
 code {
   padding: 3px 8px;
   border-radius: 5px;

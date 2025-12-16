@@ -795,6 +795,24 @@ body {
   color: var(--text-primary);
 }
 
+/* Custom icon styles for copy buttons */
+.copy-btn-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.copy-icon {
+  background-image: url('../assets/icons/copy.png');
+}
+
+.checkmark-icon {
+  background-image: url('../assets/icons/checkmark.png');
+}
+
 .loading-message,
 .no-packages-message,
 .error-message {

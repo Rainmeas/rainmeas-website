@@ -420,6 +420,11 @@
   color: var(--text-primary);
 }
 
+.copy-command-btn .copy-btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
 @media screen and (max-width: 576px) {
   .packages-grid {
     grid-template-columns: 1fr;

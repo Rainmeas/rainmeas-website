@@ -110,7 +110,7 @@ async function displayPackageDetails(packageName) {
             navigator.clipboard.writeText(command).then(() => {
                 // Show feedback
                 const originalIcon = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-check"></i>';
+                this.innerHTML = '<span class="copy-btn-icon checkmark-icon"></span>';
                 
                 setTimeout(() => {
                     this.innerHTML = originalIcon;

@@ -22,7 +22,7 @@ The website consists of the following pages:
 
 ## Technical Implementation
 
-- **Pure HTML/CSS/JS** - No frameworks or external dependencies except Font Awesome icons
+- **Pure HTML/CSS/JS** - No frameworks or external dependencies
 - **Modern CSS** - Uses CSS variables, flexbox, and grid for layout
 - **JavaScript Enhancements** - Interactive features without heavy libraries
 - **Performance Optimized** - Lightweight and fast-loading
