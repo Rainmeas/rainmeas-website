@@ -11,86 +11,6 @@
   position: relative;
 }
 
-.docs-sidebar {
-  flex: 0 0 250px;
-  position: relative;
-}
-
-.sidebar-sticky {
-  background: var(--surface-color);
-  border-radius: 10px;
-  padding: 25px;
-  border: 1px solid var(--border-color);
-  position: -webkit-sticky; /* For Safari */
-  position: sticky;
-  top: 20px;
-  z-index: 10;
-  box-shadow: var(--shadow);
-}
-
-.sidebar-title {
-  font-size: 1.3rem;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
-  position: relative;
-}
-
-.sidebar-title::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
-  border-radius: 2px;
-}
-
-.sidebar-nav {
-  list-style: none;
-}
-
-.sidebar-nav li {
-  margin-bottom: 8px;
-}
-
-.sidebar-link {
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: block;
-  padding: 10px 15px;
-  border-radius: 6px;
-  position: relative;
-  overflow: hidden;
-}
-
-.sidebar-link::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 3px;
-  height: 100%;
-  background: var(--primary-color);
-  transform: scaleY(0);
-  transition: transform 0.3s ease;
-}
-
-.sidebar-link:hover,
-.sidebar-link.active {
-  color: var(--text-primary);
-  background: var(--surface-light);
-  transform: translateX(5px);
-}
-
-.sidebar-link:hover::before,
-.sidebar-link.active::before {
-  transform: scaleY(1);
-}
-
 .docs-content {
   flex: 1;
 }
@@ -119,20 +39,28 @@
   margin-bottom: 20px;
   position: relative;
   padding-bottom: 10px;
-  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+  background: linear-gradient(
+    to right,
+    var(--primary-color),
+    var(--accent-color)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .docs-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   width: 50px;
   height: 3px;
-  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+  background: linear-gradient(
+    to right,
+    var(--primary-color),
+    var(--accent-color)
+  );
   border-radius: 2px;
 }
 
@@ -214,41 +142,10 @@
   line-height: 1.6;
 }
 
-
-
-code {
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-family: 'Fira Code', 'Courier New', monospace;
-  font-size: 0.95rem;
-  background: var(--surface-light);
-  border: 1px solid var(--border-color);
-  color: var(--accent-color);
-}
-
-pre code {
-  background: transparent;
-  border: none;
-  padding: 0;
-  border-radius: 0;
-  color: inherit;
-}
-
-
-
 /* Responsive Design */
 @media screen and (max-width: 992px) {
   .docs-container {
     flex-direction: column;
-  }
-  
-  .docs-sidebar {
-    width: 100%;
-  }
-  
-  .sidebar-sticky {
-    position: static;
-    top: auto;
   }
 }
 
@@ -258,7 +155,6 @@ pre code {
     align-items: flex-start;
   }
 }
-
 
 /* CLI Styles */
 .cli-header {
@@ -325,27 +221,35 @@ pre code {
   margin: 0;
   position: relative;
   padding-bottom: 10px;
-  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+  background: linear-gradient(
+    to right,
+    var(--primary-color),
+    var(--accent-color)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .command-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   width: 50px;
   height: 3px;
-  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+  background: linear-gradient(
+    to right,
+    var(--primary-color),
+    var(--accent-color)
+  );
   border-radius: 2px;
 }
 
 .command-syntax {
   padding: 10px 20px;
   border-radius: 30px;
-  font-family: 'Fira Code', 'Courier New', monospace;
+  font-family: "Fira Code", "Courier New", monospace;
   font-size: 0.95rem;
   color: var(--text-primary);
   background: var(--surface-light);
@@ -355,7 +259,11 @@ pre code {
 }
 
 .command-syntax:hover {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(138, 43, 226, 0.3);
@@ -381,7 +289,7 @@ pre code {
 .command-usage h3::before,
 .command-options h3::before,
 .command-example h3::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 50%;
@@ -396,15 +304,6 @@ pre code {
 @media screen and (max-width: 992px) {
   .cli-container {
     flex-direction: column;
-  }
-  
-  .cli-sidebar {
-    width: 100%;
-  }
-  
-  .sidebar-sticky {
-    position: static;
-    top: auto;
   }
 }
 
