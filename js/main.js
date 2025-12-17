@@ -63,8 +63,8 @@ const DataService = {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return await response.json();
         } catch (error) {
-            console.warn('Registry fetch failed, using local fallback:', error);
-            return this.getLocalRegistry();
+            console.warn('Registry fetch failed:', error);
+            return {};
         }
     },
 
@@ -85,7 +85,7 @@ const DataService = {
             return data;
         } catch (error) {
             console.warn(`Package details fetch failed for ${name}:`, error);
-            return this.getLocalPackage(name);
+            return null;
         }
     },
 
@@ -99,7 +99,7 @@ const DataService = {
             return await Promise.all(names.map(name => this.fetchPackageDetails(name)));
         } catch (error) {
             console.error('Error fetching all packages:', error);
-            return this.getLocalAllPackages();
+            return [];
         }
     },
 
@@ -132,43 +132,7 @@ const DataService = {
         }
     },
 
-    // --- Fallback Data ---
-    getLocalRegistry() {
-        return {
-            "nurashade-reversegeo": { "latest": "1.0.0" },
-            "nurashadeweather": { "latest": "1.0.0" }
-        };
-    },
 
-    getLocalPackage(name) {
-        const db = {
-            "nurashade-reversegeo": {
-                name: "nurashade-reversegeo",
-                author: "nurashade",
-                description: "NuraShade Reverse Geo is a Rainmeter configuration component that provides reverse geocoding capabilities using the BigDataCloud API.",
-                homepage: "https://github.com/NuraShade/NuraShadeReverseGeo",
-                license: "Creative Commons Attribution-ShareAlike 3.0 Unported",
-                versions: { latest: "1.0.0" },
-                icon: "fas fa-map-marker-alt"
-            },
-            "nurashadeweather": {
-                name: "nurashadeweather",
-                author: "nurashade",
-                description: "NuraShade Weather Measures is a collection of Rainmeter configuration files that provide comprehensive weather forecasting capabilities.",
-                homepage: "https://github.com/NuraShade/NuraShadeWeather",
-                license: "Creative Commons Attribution-ShareAlike 3.0 Unported",
-                versions: { latest: "1.0.0" },
-                icon: "fas fa-cloud-sun"
-            }
-        };
-        return db[name] || null;
-    },
-
-    getLocalAllPackages() {
-        return ["nurashade-reversegeo", "nurashadeweather"]
-            .map(name => this.getLocalPackage(name))
-            .filter(Boolean);
-    }
 };
 
 /* =========================================
@@ -462,7 +426,6 @@ const Pages = {
     Packages: {
         init() {
             this.grid = document.querySelector(CONFIG.selectors.packages.grid);
-            this.featured = document.querySelector(CONFIG.selectors.packages.featuredGrid);
             this.search = document.querySelector(CONFIG.selectors.packages.search);
             this.loadMoreBtn = document.querySelector(CONFIG.selectors.packages.loadMore);
             
@@ -484,7 +447,6 @@ const Pages = {
                 }
             };
             if (this.grid) this.grid.addEventListener('click', gridHandler);
-            if (this.featured) this.featured.addEventListener('click', gridHandler);
 
             // Initial Load
             this.load();
@@ -496,7 +458,6 @@ const Pages = {
             STATE.packages.displayed = [...packages];
             
             this.render(STATE.packages.displayed.slice(0, CONFIG.pagination.perPage));
-            this.renderFeatured(packages);
             this.updateLoadMore(CONFIG.pagination.perPage);
         },
 
@@ -517,17 +478,10 @@ const Pages = {
             }
         },
 
-        renderFeatured(packages) {
-            if (!this.featured || !packages.length) return;
-            // Feature the first package or filter by some criteria
-            const featuredPkg = packages[0]; 
-            
-            this.featured.innerHTML = this.createCardHtml(featuredPkg, true);
-        },
 
-        createCardHtml(pkg, isFeatured = false) {
-            const classes = isFeatured ? 'package-card featured' : 'package-card';
-            const badge = isFeatured ? '<div class="package-badge">Featured</div>' : '';
+
+        createCardHtml(pkg) {
+            const classes = 'package-card';
             const icon = pkg.icon ? `<div class="package-icon"><i class="${pkg.icon}"></i></div>` : '';
             const downloads = pkg.downloadCount 
                 ? `<span class="package-downloads"><i class="fas fa-download"></i> ${pkg.downloadCount}</span>` 
@@ -535,7 +489,6 @@ const Pages = {
 
             return `
                 <div class="${classes}" data-package-name="${pkg.name}">
-                    ${badge}
                     <div class="package-header">
                         ${icon}
                         <div class="package-info">
