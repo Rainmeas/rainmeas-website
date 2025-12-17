@@ -81,5 +81,62 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// The terminal animation is now handled by the CodeTerminal component
-// located in js/components/CodeTerminal.js
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Add animation to changelog items when they come into view
+  const changelogVersions = document.querySelectorAll(".changelog-version");
+
+  const observerOptions = {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.1,
+  };
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      }
+    });
+  }, observerOptions);
+
+  changelogVersions.forEach((version) => {
+    observer.observe(version);
+  });
+});
+
+// CLI Commands page functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate sections on scroll
+    const cliSections = document.querySelectorAll('.cli-section');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    cliSections.forEach(section => {
+        observer.observe(section);
+    });
+});
+
+// Documentation page functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate sections on scroll
+    const docSections = document.querySelectorAll('.docs-section');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    docSections.forEach(section => {
+        observer.observe(section);
+    });
+});
