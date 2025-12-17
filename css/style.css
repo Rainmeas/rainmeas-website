@@ -1444,19 +1444,28 @@ body {
   
   .nav-menu {
     position: fixed;
-    left: -100%;
+    left: 0;
     top: 70px;
     flex-direction: column;
     background-color: var(--surface-color);
     width: 100%;
     text-align: center;
-    transition: 0.3s;
     box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
     border-bottom: 1px solid var(--border-color);
+    
+    /* Robust Hiding State */
+    transform: translateX(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0s 0.3s;
   }
 
   .nav-menu.active {
-    left: 0;
+    /* Active State */
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0s;
   }
 
   .nav-item {
