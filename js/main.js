@@ -288,7 +288,10 @@ const packagesPerPage = 6;
 // Package search functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Load packages when page loads
-    loadPackages();
+    // Only load packages on pages that have the packages grid
+    if (document.getElementById('packages-grid')) {
+        loadPackages();
+    }
     
     const searchInput = document.getElementById('package-search');
     
@@ -308,9 +311,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (detailsButton) {
             const packageCard = detailsButton.closest('.package-card');
-            const packageName = packageCard.querySelector('.package-name').textContent;
-            // Redirect to package detail page instead of showing modal
-            window.location.href = `package/detail.html?name=${encodeURIComponent(packageName)}`;
+            const packageNameElement = packageCard.querySelector('.package-name');
+            if (packageNameElement) {
+                const packageName = packageNameElement.textContent;
+                // Redirect to package detail page instead of showing modal
+                window.location.href = `package/detail.html?name=${encodeURIComponent(packageName)}`;
+            }
         }
     }
     
@@ -345,20 +351,31 @@ async function loadPackages() {
         
         // Hide load more button if all packages are displayed
         const loadMoreButton = document.getElementById('load-more-btn');
-        if (packages.length <= packagesPerPage) {
-            loadMoreButton.style.display = 'none';
-        } else {
-            loadMoreButton.style.display = 'block';
+        if (loadMoreButton) {
+            if (packages.length <= packagesPerPage) {
+                loadMoreButton.style.display = 'none';
+            } else {
+                loadMoreButton.style.display = 'block';
+            }
         }
     } catch (error) {
         console.error('Error loading packages:', error);
-        document.getElementById('packages-grid').innerHTML = '<div class="error-message">Failed to load packages. Please try again later.</div>';
+        const packagesGrid = document.getElementById('packages-grid');
+        if (packagesGrid) {
+            packagesGrid.innerHTML = '<div class="error-message">Failed to load packages. Please try again later.</div>';
+        }
     }
 }
 
 // Function to display packages
 function displayPackages(packages) {
     const packagesGrid = document.getElementById('packages-grid');
+    
+    // Check if packages grid exists before trying to manipulate it
+    if (!packagesGrid) {
+        console.warn('Packages grid element not found');
+        return;
+    }
     
     if (!packages || packages.length === 0) {
         packagesGrid.innerHTML = '<div class="no-packages-message">No packages found.</div>';
@@ -407,6 +424,12 @@ function displayPackages(packages) {
 // Function to display featured packages
 function displayFeaturedPackages(packages) {
     const featuredGrid = document.getElementById('featured-packages-grid');
+    
+    // Check if featured packages grid exists before trying to manipulate it
+    if (!featuredGrid) {
+        console.warn('Featured packages grid element not found');
+        return;
+    }
     
     if (!packages || packages.length === 0) {
         featuredGrid.innerHTML = '<div class="no-packages-message">No featured packages available.</div>';
@@ -469,10 +492,12 @@ function filterPackages(searchTerm) {
     
     // Show/hide load more button based on filtered results
     const loadMoreButton = document.getElementById('load-more-btn');
-    if (displayedPackages.length <= packagesPerPage) {
-        loadMoreButton.style.display = 'none';
-    } else {
-        loadMoreButton.style.display = 'block';
+    if (loadMoreButton) {
+        if (displayedPackages.length <= packagesPerPage) {
+            loadMoreButton.style.display = 'none';
+        } else {
+            loadMoreButton.style.display = 'block';
+        }
     }
 }
 
@@ -487,8 +512,10 @@ function loadMorePackages() {
     
     // Hide load more button if all packages are displayed
     const loadMoreButton = document.getElementById('load-more-btn');
-    if (endIndex >= displayedPackages.length) {
-        loadMoreButton.style.display = 'none';
+    if (loadMoreButton) {
+        if (endIndex >= displayedPackages.length) {
+            loadMoreButton.style.display = 'none';
+        }
     }
 }
 
@@ -505,16 +532,19 @@ function getParameterByName(name, url) {
 }
 
 // Configure marked.js options
-marked.setOptions({
-    gfm: true,
-    breaks: true,
-    smartLists: true,
-    smartypants: true,
-    highlight: function(code, lang) {
-        // Simple syntax highlighting
-        return code;
-    }
-});
+// Only configure if marked is available (loaded on package detail page)
+if (typeof marked !== 'undefined') {
+    marked.setOptions({
+        gfm: true,
+        breaks: true,
+        smartLists: true,
+        smartypants: true,
+        highlight: function(code, lang) {
+            // Simple syntax highlighting
+            return code;
+        }
+    });
+}
 
 // Fetch and render markdown content using marked.js
 async function fetchAndRenderMarkdown(url) {
@@ -525,7 +555,12 @@ async function fetchAndRenderMarkdown(url) {
         }
         const markdownText = await response.text();
         // Use marked.js to convert markdown to HTML
-        return marked.parse(markdownText);
+        if (typeof marked !== 'undefined') {
+            return marked.parse(markdownText);
+        } else {
+            // Fallback if marked is not available
+            return '<p>Error: Markdown renderer not available.</p>';
+        }
     } catch (error) {
         console.error('Error fetching markdown:', error);
         return '<p>Error loading documentation. Please visit the <a href="' + url + '" target="_blank">source</a> directly.</p>';
@@ -539,68 +574,106 @@ async function displayPackageDetails(packageName) {
         document.title = packageName + ' - Rainmeas';
         
         // Update breadcrumb
-        document.getElementById('package-name-breadcrumb').textContent = packageName;
+        const breadcrumbElement = document.getElementById('package-name-breadcrumb');
+        if (breadcrumbElement) {
+            breadcrumbElement.textContent = packageName;
+        }
         
         const pkg = await fetchPackageDetails(packageName);
         if (!pkg) {
-            document.getElementById('package-readme').innerHTML = '<div class="error-message">Package not found.</div>';
+            const readmeElement = document.getElementById('package-readme');
+            if (readmeElement) {
+                readmeElement.innerHTML = '<div class="error-message">Package not found.</div>';
+            }
             return;
         }
         
         // Update header information
-        document.getElementById('package-title').textContent = pkg.name;
-        document.getElementById('package-author').textContent = 'by ' + pkg.author;
+        const titleElement = document.getElementById('package-title');
+        if (titleElement) {
+            titleElement.textContent = pkg.name;
+        }
+        
+        const authorElement = document.getElementById('package-author');
+        if (authorElement) {
+            authorElement.textContent = 'by ' + pkg.author;
+        }
         
         // Update sidebar information
-        document.getElementById('package-version').textContent = 'v' + pkg.versions.latest;
-        document.getElementById('package-license').textContent = pkg.license || 'Not specified';
+        const versionElement = document.getElementById('package-version');
+        if (versionElement) {
+            versionElement.textContent = 'v' + pkg.versions.latest;
+        }
+        
+        const licenseElement = document.getElementById('package-license');
+        if (licenseElement) {
+            licenseElement.textContent = pkg.license || 'Not specified';
+        }
         
         // Format versions list
         const versionsList = Object.keys(pkg.versions)
             .filter(v => v !== 'latest')
             .join(', ') || 'None';
-        document.getElementById('package-versions').textContent = versionsList;
+        const versionsElement = document.getElementById('package-versions');
+        if (versionsElement) {
+            versionsElement.textContent = versionsList;
+        }
         
         // Add download count if available
         if (pkg.downloadCount !== undefined) {
-            const downloadItem = document.createElement('div');
-            downloadItem.className = 'package-detail-item';
-            downloadItem.innerHTML = `
-                <div class="package-detail-label">Downloads</div>
-                <div class="package-detail-value"><i class="fas fa-download"></i> ${pkg.downloadCount}</div>
-            `;
-            
-            // Insert before the last item (installation card)
             const packageDetailCard = document.querySelector('.package-detail-card');
-            const lastItem = packageDetailCard.querySelector('.package-detail-item:last-child');
-            lastItem.parentNode.insertBefore(downloadItem, lastItem);
+            if (packageDetailCard) {
+                const downloadItem = document.createElement('div');
+                downloadItem.className = 'package-detail-item';
+                downloadItem.innerHTML = `
+                    <div class="package-detail-label">Downloads</div>
+                    <div class="package-detail-value"><i class="fas fa-download"></i> ${pkg.downloadCount}</div>
+                `;
+                
+                // Insert before the last item (installation card)
+                const lastItem = packageDetailCard.querySelector('.package-detail-item:last-child');
+                if (lastItem && lastItem.parentNode) {
+                    lastItem.parentNode.insertBefore(downloadItem, lastItem);
+                }
+            }
         }
         
         // Update installation command
-        document.getElementById('install-command').textContent = 'rainmeas install ' + pkg.name;
+        const installCommandElement = document.getElementById('install-command');
+        if (installCommandElement) {
+            installCommandElement.textContent = 'rainmeas install ' + pkg.name;
+        }
         
         // Update GitHub link
         const githubLink = document.getElementById('github-link');
-        if (pkg.homepage) {
-            githubLink.href = pkg.homepage;
-        } else {
-            githubLink.style.display = 'none';
+        if (githubLink) {
+            if (pkg.homepage) {
+                githubLink.href = pkg.homepage;
+            } else {
+                githubLink.style.display = 'none';
+            }
         }
         
         // Package icon functionality removed as per project specification
         
         // Fetch and render README if available
-        if (pkg.markdown) {
-            const readmeHtml = await fetchAndRenderMarkdown(pkg.markdown);
-            document.getElementById('package-readme').innerHTML = readmeHtml;
-        } else {
-            // If no markdown, show description
-            document.getElementById('package-readme').innerHTML = '<p>' + pkg.description + '</p>';
+        const readmeElement = document.getElementById('package-readme');
+        if (readmeElement) {
+            if (pkg.markdown) {
+                const readmeHtml = await fetchAndRenderMarkdown(pkg.markdown);
+                readmeElement.innerHTML = readmeHtml;
+            } else {
+                // If no markdown, show description
+                readmeElement.innerHTML = '<p>' + pkg.description + '</p>';
+            }
         }
         
     } catch (error) {
         console.error('Error loading package details:', error);
-        document.getElementById('package-readme').innerHTML = '<div class="error-message">Failed to load package details. Please try again later.</div>';
+        const readmeElement = document.getElementById('package-readme');
+        if (readmeElement) {
+            readmeElement.innerHTML = '<div class="error-message">Failed to load package details. Please try again later.</div>';
+        }
     }
 }
 
@@ -610,7 +683,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (packageName) {
         displayPackageDetails(packageName);
     } else {
-        document.getElementById('package-readme').innerHTML = '<div class="error-message">No package specified.</div>';
+        const readmeElement = document.getElementById('package-readme');
+        if (readmeElement) {
+            readmeElement.innerHTML = '<div class="error-message">No package specified.</div>';
+        }
     }
 });
 
