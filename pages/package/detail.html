@@ -7,40 +7,41 @@
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="../../css/components/CodeBlock.css">
     <link rel="stylesheet" href="../../css/detail.css">
+    <link rel="stylesheet" href="../../css/components/HeaderNew.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <img src="../../assets/rainmeas.png" alt="Rainmeas Logo" class="logo-img">
-                <span>Rainmeas</span>
+    <!-- New Header Component -->
+    <header class="header">
+        <nav class="navbar" role="navigation" aria-label="Main navigation">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <img src="../../assets/rainmeas.png" alt="Rainmeas Logo" class="logo-img">
+                    <span>Rainmeas</span>
+                </div>
+                
+                <ul class="nav-menu" role="menubar">
+                    <li class="nav-item" role="none">
+                        <a href="../../index.html" class="nav-link" role="menuitem">Home</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="../packages.html" class="nav-link" role="menuitem">Packages</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="../documentation.html" class="nav-link" role="menuitem">Documentation</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="../changelog.html" class="nav-link" role="menuitem">Changelog</a>
+                    </li>
+                </ul>
+                
+                <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <img src="/assets/icons/menu.png" alt="Menu" class="nav-toggle-icon menu-icon">
+                    <img src="/assets/icons/close.png" alt="Close" class="nav-toggle-icon close-icon" style="display: none;">
+                </button>
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="../../index.html" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../packages.html" class="nav-link active">Packages</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../documentation.html" class="nav-link">Documentation</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../cli.html" class="nav-link">CLI Commands</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../changelog.html" class="nav-link">Changelog</a>
-                </li>
-            </ul>
-            <div class="nav-toggle">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <!-- Package Detail Header -->
     <section class="package-detail-header">
@@ -155,6 +156,7 @@
         </div>
     </footer>
 
+    <script src="../../js/components/HeaderNew.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="../../js/components/CodeBlock.js"></script>
     <script src="../../js/main.js"></script>
