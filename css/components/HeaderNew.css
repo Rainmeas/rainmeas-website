@@ -52,6 +52,11 @@
 
 .nav-item {
   margin: 0 15px;
+  transition: var(--transition);
+}
+
+.nav-item:hover {
+  transform: translateY(-2px); /* Subtle lift effect on hover */
 }
 
 .nav-link {
@@ -62,6 +67,7 @@
   position: relative;
   padding: 5px 0;
   border-radius: 4px;
+  font-size: 1.1em; /* Slightly larger text */
 }
 
 .nav-link:hover,
@@ -73,7 +79,13 @@
 
 .nav-link.active {
   color: var(--text-primary);
-  background-color: rgba(138, 43, 226, 0.15);
+  background-color: rgba(138, 43, 226, 0.2); /* More prominent background */
+  font-weight: 600; /* Bolder text */
+  font-size: 1.2em; /* Larger text for active links */
+  padding: 8px 12px; /* More padding for emphasis */
+  border-radius: 6px; /* Slightly rounded corners */
+  transform: scale(1.05); /* Slight zoom effect */
+  box-shadow: 0 2px 8px rgba(138, 43, 226, 0.3); /* Subtle shadow */
 }
 
 .nav-link::after {
@@ -152,6 +164,12 @@
     display: block;
     padding: 1.5rem;
     border-bottom: 1px solid var(--border-color);
+    font-size: 1.2em; /* Larger text on mobile */
+  }
+
+  .nav-link.active {
+    font-size: 1.3em; /* Even larger for active links on mobile */
+    padding: 1.8rem;
   }
 
   .nav-toggle {
