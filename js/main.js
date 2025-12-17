@@ -646,10 +646,40 @@ const Pages = {
                     
                     if (typeof marked !== 'undefined') {
                         container.innerHTML = marked.parse(text);
+                        
+                        // Post-process for Code Blocks (Copy Button & Highlight)
+                        container.querySelectorAll('pre').forEach(pre => {
+                            // 1. Wrap in .code-block
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'code-block';
+                            pre.parentNode.insertBefore(wrapper, pre);
+                            wrapper.appendChild(pre);
+
+                            // 2. Add Copy Button
+                            const btn = document.createElement('button');
+                            btn.className = 'copy-btn';
+                            btn.innerHTML = '<span class="copy-btn-icon copy-icon"></span>'; // Assuming CSS handles the icon content/bg
+                            // If CSS expects an icon element inside:
+                            // <i class="far fa-copy"></i> or similar. 
+                            // Checking style.css, it seems to use width/height/bg-img or similar, 
+                            // but let's stick to the structure seen elsewhere:
+                            // <span class="copy-btn-icon copy-icon"></span>
+                            
+                            wrapper.appendChild(btn);
+                            Components.bindCopyButton(btn, wrapper);
+                            
+                            // 3. Syntax Highlighting
+                            const code = pre.querySelector('code');
+                            if (code && typeof hljs !== 'undefined') {
+                                hljs.highlightElement(code);
+                            }
+                        });
+
                     } else {
                         container.textContent = text;
                     }
                 } catch (e) {
+                    console.error(e);
                     container.innerHTML = `<p>Error loading documentation. View on <a href="${pkg.homepage}">GitHub</a>.</p>`;
                 }
             } else {
