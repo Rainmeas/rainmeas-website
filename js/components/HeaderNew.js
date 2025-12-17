@@ -118,12 +118,23 @@ class HeaderNew {
     setActiveLink() {
         // Get current page path
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-        
+        const fullPath = window.location.pathname;
+            
         // Remove active class from all links
         document.querySelectorAll('.nav-link').forEach(link => {
             link.classList.remove('active');
         });
-        
+            
+        // Check if we're on a documentation page
+        if (fullPath.includes('/docs/') || fullPath.includes('/documentation')) {
+            // Activate the Documentation link for all documentation pages
+            const docLink = document.querySelector('.nav-link[href*="documentation"]');
+            if (docLink) {
+                docLink.classList.add('active');
+                return;
+            }
+        }
+            
         // Add active class to current page link
         const activeLink = document.querySelector(`.nav-link[href*="${currentPage}"]`);
         if (activeLink) {
@@ -131,7 +142,7 @@ class HeaderNew {
         } else {
             // Fallback for home page
             if (currentPage === 'index.html' || currentPage === '') {
-                const homeLink = document.querySelector('.nav-link[href="index.html"], .nav-link[href="/"]');
+                const homeLink = document.querySelector('.nav-link[href="index.html"], .nav-link[href="/" ]');
                 if (homeLink) {
                     homeLink.classList.add('active');
                 }
