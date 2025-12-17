@@ -645,6 +645,11 @@ body {
   flex-wrap: wrap;
 }
 
+.package-detail-header .package-actions .btn {
+  flex: 0 0 auto;
+  width: auto;
+}
+
 @media screen and (max-width: 576px) {
   .package-detail-header .package-actions {
     flex-direction: column;
@@ -823,11 +828,14 @@ body {
 .install-command {
   background: var(--background-darker);
   padding: 15px;
+  padding-right: 80px; /* Space for copy button */
   border-radius: 8px;
   font-family: 'Courier New', monospace;
   margin: 15px 0;
   position: relative;
   border: 1px solid var(--border-color);
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 /* Responsive design for code blocks */
@@ -1196,12 +1204,13 @@ body {
   flex-wrap: wrap;
   gap: 15px;
   margin-bottom: 25px;
-  padding: 20px;
-  background: var(--surface-color);
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
 }
+
 
 .command-title {
   font-size: 1.8rem;
@@ -1740,12 +1749,15 @@ body {
 .code-block pre {
   margin: 0;
   padding: 20px;
+  padding-right: 60px; /* Space for copy button */
   background: var(--background-darker);
-  overflow-x: auto;
+  overflow-x: hidden; /* Hide scrollbar */
   font-family: 'Courier New', monospace;
   font-size: 0.95rem;
   line-height: 1.5;
   color: var(--text-primary);
+  white-space: pre-wrap; /* Wrap text */
+  word-break: break-all; /* Break long words if necessary */
 }
 
 .code-block pre code {
