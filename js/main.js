@@ -312,6 +312,9 @@ const Navigation = {
         // Handle Documentation specially
         if (currentPath.includes('/docs/') || currentPath.includes('/documentation')) {
             selector = '.nav-link[href*="documentation"]';
+        } else if (currentPath.includes('/package/') || filename === 'detail.html') {
+            // Highlight 'Packages' for any detail page
+            selector = '.nav-link[href*="packages"]';
         } else if (filename === 'index.html' || filename === '') {
             selector = '.nav-link[href="index.html"], .nav-link[href="/"]';
         }
