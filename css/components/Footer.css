@@ -130,10 +130,10 @@
 .github-icon {
   width: 24px;
   height: 24px;
-  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+  filter: brightness(0) invert(1);
   transition: filter 0.3s ease;
 }
 
 .social-icons a:hover .github-icon {
-  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(162deg) brightness(103%) contrast(101%);
+  filter: brightness(0) invert(1);
 }
