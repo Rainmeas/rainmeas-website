@@ -1074,9 +1074,11 @@
    .package-readme a {
         color: var(--accent-color);
         text-decoration: none;
+        transition: color 0.3s ease;
    }
    
    .package-readme a:hover {
+        color: var(--primary-color);
         text-decoration: underline;
    }
 
@@ -1435,6 +1437,18 @@
        line-height: 1.8;
        font-size: 1.05rem;
    }
+
+   .docs-section a {
+       color: var(--accent-color);
+       text-decoration: none;
+       transition: color 0.3s ease;
+   }
+   
+   .docs-section a:hover {
+       color: var(--primary-color);
+       text-decoration: underline;
+   }
+   
    
    .docs-list {
        padding-left: 20px;
