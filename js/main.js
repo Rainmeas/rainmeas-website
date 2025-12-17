@@ -1,1142 +1,711 @@
-// Liquid Text Animation for Feature Cards
-document.addEventListener('DOMContentLoaded', function() {
-    const featureCards = document.querySelectorAll('.feature-card');
-    
-    featureCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            const icon = this.querySelector('.feature-icon i');
-            icon.style.animation = 'liquidMove 1s ease infinite';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            const icon = this.querySelector('.feature-icon i');
-            icon.style.animation = '';
-        });
-    });
-    
-    // Add ripple effect to buttons
-    const buttons = document.querySelectorAll('.btn');
-    buttons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            // Create ripple element
-            const ripple = document.createElement('span');
-            ripple.classList.add('ripple');
-            
-            // Position ripple at click location
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            
-            // Add ripple to button
-            this.appendChild(ripple);
-            
-            // Remove ripple after animation completes
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
-    });
-});
+/**
+ * Rainmeas Website - Main JavaScript
+ * 
+ * Organized using a modular architecture for better maintainability and readability.
+ * Uses modern ES6+ features and clear separation of concerns.
+ */
 
-// Add scroll animation to sections
-document.addEventListener('DOMContentLoaded', function() {
-    const sections = document.querySelectorAll('section');
-    
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.1
-    };
-    
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animated');
+/* =========================================
+   1. CONFIGURATION & STATE
+   ========================================= */
+const CONFIG = {
+    selectors: {
+        header: {
+            toggle: '.nav-toggle',
+            menu: '.nav-menu',
+            links: '.nav-link',
+            menuIcon: '.menu-icon',
+            closeIcon: '.close-icon'
+        },
+        packages: {
+            grid: '#packages-grid',
+            featuredGrid: '#featured-packages-grid',
+            search: '#package-search',
+            loadMore: '#load-more-btn',
+            detailContainer: '.package-detail-container'
+        },
+        ui: {
+            featureCards: '.feature-card',
+            buttons: '.btn',
+            sections: 'section, .cli-section, .docs-section, .changelog-version',
+            codeBlocks: '.code-block',
+            terminals: '.terminal-code'
+        }
+    },
+    api: {
+        registry: 'https://raw.githubusercontent.com/Rainmeas/rainmeas-registry/main/index.json',
+        packageBase: 'https://raw.githubusercontent.com/Rainmeas/rainmeas-registry/main/packages/',
+        githubApi: 'https://api.github.com/repos/'
+    },
+    pagination: {
+        perPage: 6
+    }
+};
+
+const STATE = {
+    packages: {
+        all: [],
+        displayed: [],
+        currentPage: 1
+    }
+};
+
+/* =========================================
+   2. DATA SERVICE (Registry & API)
+   ========================================= */
+const DataService = {
+    /**
+     * Fetch the registry index
+     */
+    async fetchRegistry() {
+        try {
+            const response = await fetch(CONFIG.api.registry);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.warn('Registry fetch failed, using local fallback:', error);
+            return this.getLocalRegistry();
+        }
+    },
+
+    /**
+     * Fetch details for a specific package
+     */
+    async fetchPackageDetails(name) {
+        try {
+            const response = await fetch(`${CONFIG.api.packageBase}${name}.json`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
+            const data = await response.json();
+            
+            // Enrich with GitHub data (downloads)
+            const downloads = await this.fetchGithubDownloads(data.homepage);
+            if (downloads !== null) data.downloadCount = downloads;
+            
+            return data;
+        } catch (error) {
+            console.warn(`Package details fetch failed for ${name}:`, error);
+            return this.getLocalPackage(name);
+        }
+    },
+
+    /**
+     * Fetch all packages
+     */
+    async fetchAllPackages() {
+        try {
+            const registry = await this.fetchRegistry();
+            const names = Object.keys(registry);
+            return await Promise.all(names.map(name => this.fetchPackageDetails(name)));
+        } catch (error) {
+            console.error('Error fetching all packages:', error);
+            return this.getLocalAllPackages();
+        }
+    },
+
+    /**
+     * Fetch download counts from GitHub API
+     */
+    async fetchGithubDownloads(homepageUrl) {
+        if (!homepageUrl) return null;
+        
+        try {
+            // Extract owner/repo from URL
+            const match = homepageUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+            if (!match) return null;
+
+            const [_, owner, repo] = match;
+            const response = await fetch(`${CONFIG.api.githubApi}${owner}/${repo}/releases`);
+            
+            if (!response.ok) return null;
+            
+            const releases = await response.json();
+            
+            // Sum asset download counts
+            return releases.reduce((total, release) => {
+                const assetDownloads = (release.assets || []).reduce((acc, asset) => acc + (asset.download_count || 0), 0);
+                return total + assetDownloads;
+            }, 0);
+        } catch (error) {
+            console.error('GitHub API error:', error);
+            return null;
+        }
+    },
+
+    // --- Fallback Data ---
+    getLocalRegistry() {
+        return {
+            "nurashade-reversegeo": { "latest": "1.0.0" },
+            "nurashadeweather": { "latest": "1.0.0" }
+        };
+    },
+
+    getLocalPackage(name) {
+        const db = {
+            "nurashade-reversegeo": {
+                name: "nurashade-reversegeo",
+                author: "nurashade",
+                description: "NuraShade Reverse Geo is a Rainmeter configuration component that provides reverse geocoding capabilities using the BigDataCloud API.",
+                homepage: "https://github.com/NuraShade/NuraShadeReverseGeo",
+                license: "Creative Commons Attribution-ShareAlike 3.0 Unported",
+                versions: { latest: "1.0.0" },
+                icon: "fas fa-map-marker-alt"
+            },
+            "nurashadeweather": {
+                name: "nurashadeweather",
+                author: "nurashade",
+                description: "NuraShade Weather Measures is a collection of Rainmeter configuration files that provide comprehensive weather forecasting capabilities.",
+                homepage: "https://github.com/NuraShade/NuraShadeWeather",
+                license: "Creative Commons Attribution-ShareAlike 3.0 Unported",
+                versions: { latest: "1.0.0" },
+                icon: "fas fa-cloud-sun"
+            }
+        };
+        return db[name] || null;
+    },
+
+    getLocalAllPackages() {
+        return ["nurashade-reversegeo", "nurashadeweather"]
+            .map(name => this.getLocalPackage(name))
+            .filter(Boolean);
+    }
+};
+
+/* =========================================
+   3. UI & ANIMATION MODULES
+   ========================================= */
+const UI = {
+    /**
+     * Initialize all scroll-based animations
+     */
+    initScrollAnimations() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible', 'animated');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll(CONFIG.selectors.ui.sections).forEach(el => observer.observe(el));
+    },
+
+    /**
+     * Initialize specific UI effects (Liquid text, Ripple)
+     */
+    initEffects() {
+        // Feature Cards Liquid Effect
+        document.querySelectorAll(CONFIG.selectors.ui.featureCards).forEach(card => {
+            const icon = card.querySelector('.feature-icon i');
+            if (!icon) return;
+            
+            card.addEventListener('mouseenter', () => icon.style.animation = 'liquidMove 1s ease infinite');
+            card.addEventListener('mouseleave', () => icon.style.animation = '');
+        });
+
+        // Button Ripple Effect
+        document.querySelectorAll(CONFIG.selectors.ui.buttons).forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    }
+};
+
+/* =========================================
+   4. NAVIGATION MODULE
+   ========================================= */
+const Navigation = {
+    init() {
+        this.cacheDOM();
+        this.bindEvents();
+        this.setActiveLink();
+    },
+
+    cacheDOM() {
+        this.toggle = document.querySelector(CONFIG.selectors.header.toggle);
+        this.menu = document.querySelector(CONFIG.selectors.header.menu);
+        this.menuIcon = document.querySelector(CONFIG.selectors.header.menuIcon);
+        this.closeIcon = document.querySelector(CONFIG.selectors.header.closeIcon);
+    },
+
+    bindEvents() {
+        if (!this.toggle || !this.menu) return;
+
+        // Toggle click
+        this.toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleMenu();
+        });
+
+        // Close on link click
+        document.querySelectorAll(CONFIG.selectors.header.links).forEach(link => {
+            link.addEventListener('click', () => this.closeMenu());
+        });
+
+        // Close on click outside
+        document.addEventListener('click', (e) => {
+            if (!this.menu.contains(e.target) && !this.toggle.contains(e.target)) {
+                this.closeMenu();
             }
         });
-    }, observerOptions);
-    
-    sections.forEach(section => {
-        observer.observe(section);
-    });
-});
 
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Add animation to changelog items when they come into view
-  const changelogVersions = document.querySelectorAll(".changelog-version");
-
-  const observerOptions = {
-    root: null,
-    rootMargin: "0px",
-    threshold: 0.1,
-  };
-
-  const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      }
-    });
-  }, observerOptions);
-
-  changelogVersions.forEach((version) => {
-    observer.observe(version);
-  });
-});
-
-// CLI Commands page functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Animate sections on scroll
-    const cliSections = document.querySelectorAll('.cli-section');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
+        // Keyboard Escape
+        this.menu.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeMenu();
+                this.toggle.focus();
             }
         });
-    }, { threshold: 0.1 });
-    
-    cliSections.forEach(section => {
-        observer.observe(section);
-    });
-});
+    },
 
-// Documentation page functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Animate sections on scroll
-    const docSections = document.querySelectorAll('.docs-section');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
+    toggleMenu() {
+        const isActive = this.menu.classList.toggle('active');
+        this.toggle.classList.toggle('active');
+        this.toggle.setAttribute('aria-expanded', isActive);
+        
+        this.updateIcons(isActive);
+        document.body.style.overflow = isActive ? 'hidden' : '';
+    },
+
+    closeMenu() {
+        if (!this.menu.classList.contains('active')) return;
+        
+        this.menu.classList.remove('active');
+        this.toggle.classList.remove('active');
+        this.toggle.setAttribute('aria-expanded', 'false');
+        
+        this.updateIcons(false);
+        document.body.style.overflow = '';
+    },
+
+    updateIcons(isActive) {
+        if (this.menuIcon && this.closeIcon) {
+            this.menuIcon.style.display = isActive ? 'none' : 'block';
+            this.closeIcon.style.display = isActive ? 'block' : 'none';
+        }
+    },
+
+    setActiveLink() {
+        const currentPath = window.location.pathname;
+        const filename = currentPath.split('/').pop() || 'index.html';
+        
+        // Clear active
+        document.querySelectorAll(CONFIG.selectors.header.links).forEach(l => l.classList.remove('active'));
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+
+        // Header Logic
+        let selector = `.nav-link[href*="${filename}"]`;
+        
+        // Handle Documentation specially
+        if (currentPath.includes('/docs/') || currentPath.includes('/documentation')) {
+            selector = '.nav-link[href*="documentation"]';
+        } else if (filename === 'index.html' || filename === '') {
+            selector = '.nav-link[href="index.html"], .nav-link[href="/"]';
+        }
+
+        const activeNav = document.querySelector(selector);
+        if (activeNav) activeNav.classList.add('active');
+
+        // Sidebar logic
+        const sidebarLink = document.querySelector(`.sidebar-link[href="${filename}"]`);
+        if (sidebarLink) sidebarLink.classList.add('active');
+    }
+};
+
+/* =========================================
+   5. COMPONENT MODULES
+   ========================================= */
+const Components = {
+    init() {
+        this.initCodeBlocks();
+        this.initTerminals();
+    },
+
+    // --- Code Blocks (Copy Logic) ---
+    initCodeBlocks() {
+        document.querySelectorAll(CONFIG.selectors.ui.codeBlocks).forEach(block => {
+            const btn = block.querySelector('.copy-btn');
+            if (btn) this.bindCopyButton(btn, block);
         });
-    }, { threshold: 0.1 });
-    
-    docSections.forEach(section => {
-        observer.observe(section);
-    });
-});
+        
+        // Also bind standalone copy buttons (e.g. in install cards)
+        document.querySelectorAll('.copy-btn:not(.code-block .copy-btn)').forEach(btn => {
+            this.bindCopyButton(btn, null);
+        });
+    },
 
-// Registry Functions
-// Function to fetch registry index from GitHub
-async function fetchRegistryIndex() {
-    try {
-        const response = await fetch('https://raw.githubusercontent.com/Rainmeas/rainmeas-registry/main/index.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching registry index:', error);
-        // Fallback to local data if GitHub fetch fails
-        return getLocalRegistryData();
-    }
-}
-
-// Function to fetch package details from GitHub
-async function fetchPackageDetails(packageName) {
-    try {
-        const response = await fetch(`https://raw.githubusercontent.com/Rainmeas/rainmeas-registry/main/packages/${packageName}.json`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        
-        // Add download count from GitHub API
-        const downloadCount = await getGitHubDownloadCount(data);
-        if (downloadCount !== null) {
-            data.downloadCount = downloadCount;
-        }
-        
-        return data;
-    } catch (error) {
-        console.error(`Error fetching package details for ${packageName}:`, error);
-        // Fallback to local data if GitHub fetch fails
-        return getLocalPackageData(packageName);
-    }
-}
-
-// Function to get all package details from GitHub
-async function getAllPackageDetails() {
-    try {
-        const registryData = await fetchRegistryIndex();
-        const packageNames = Object.keys(registryData);
-        
-        const packagePromises = packageNames.map(name => fetchPackageDetails(name));
-        const packages = await Promise.all(packagePromises);
-        
-        return packages;
-    } catch (error) {
-        console.error('Error fetching all package details:', error);
-        // Fallback to local data if GitHub fetch fails
-        return getLocalAllPackageDetails();
-    }
-}
-
-// Function to get download count from GitHub API
-async function getGitHubDownloadCount(packageData) {
-    try {
-        // Extract owner and repo from homepage URL
-        if (!packageData.homepage) return null;
-        
-        const githubUrlMatch = packageData.homepage.match(/github\.com\/([^\/]+)\/([^\/]+)/);
-        if (!githubUrlMatch) return null;
-        
-        const owner = githubUrlMatch[1];
-        const repo = githubUrlMatch[2];
-        
-        // Fetch releases data from GitHub API
-        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases`);
-        if (!response.ok) return null;
-        
-        const releases = await response.json();
-        
-        // Sum up download counts from all assets in all releases
-        let totalDownloads = 0;
-        for (const release of releases) {
-            if (release.assets) {
-                for (const asset of release.assets) {
-                    totalDownloads += asset.download_count || 0;
+    bindCopyButton(btn, container) {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const text = this.getCopyTarget(btn, container);
+            
+            if (text) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    this.showCopyFeedback(btn);
+                } catch (err) {
+                    console.error('Copy failed:', err);
                 }
             }
-        }
+        });
+    },
+
+    getCopyTarget(btn, container) {
+        // Priority 1: Data attribute on button
+        if (btn.hasAttribute('data-copy')) return btn.getAttribute('data-copy');
         
-        return totalDownloads;
-    } catch (error) {
-        console.error('Error fetching download count from GitHub API:', error);
+        // Priority 2: Target ID
+        if (btn.hasAttribute('data-command-target')) {
+            const target = document.getElementById(btn.getAttribute('data-command-target'));
+            return target ? target.textContent : null;
+        }
+
+        // Priority 3: Container context
+        if (container) {
+            const code = container.querySelector('code, pre') || container.previousElementSibling;
+            return code ? code.textContent : null;
+        }
         return null;
-    }
-}
+    },
 
-// Local fallback data
-function getLocalRegistryData() {
-    return {
-        "nurashade-reversegeo": {
-            "latest": "1.0.0",
-            "versions": ["1.0.0"]
-        },
-        "nurashadeweather": {
-            "latest": "1.0.0",
-            "versions": ["1.0.0"]
-        }
-    };
-}
-
-function getLocalPackageData(packageName) {
-    const packageData = {
-        "nurashade-reversegeo": {
-            "name": "nurashade-reversegeo",
-            "author": "nurashade",
-            "description": "NuraShade Reverse Geo is a Rainmeter configuration component that provides reverse geocoding capabilities using the BigDataCloud API. Given a latitude and longitude, it retrieves detailed location information including country, city, subdivision, continent, postcode, and more. This package is designed to complement the NuraShade weather suite and enhance location-based displays in Rainmeter modules.",
-            "homepage": "https://github.com/NuraShade/NuraShadeReverseGeo",
-            "license": "Creative Commons Attribution-ShareAlike 3.0 Unported",
-            "versions": {
-                "1.0.0": {
-                    "download": "https://github.com/NuraShade/NuraShadeReverseGeo/releases/download/v1.0.0/nurashade-reversegeo_v1.0.0.zip"
-                },
-                "latest": "1.0.0"
-            },
-            "dependencies": {},
-            "icon": "fas fa-map-marker-alt"
-        },
-        "nurashadeweather": {
-            "name": "nurashadeweather",
-            "author": "nurashade",
-            "description": "NuraShade Weather Measures is a collection of Rainmeter configuration files that provide comprehensive weather forecasting capabilities using the Open-Meteo API. This package includes measures for current weather conditions, 7-day forecasts, and 7-hour hourly forecasts. Most numerical measures include both precise and rounded variants for flexible display options.",
-            "homepage": "https://github.com/NuraShade/NuraShadeWeather",
-            "license": "Creative Commons Attribution-ShareAlike 3.0 Unported",
-            "versions": {
-                "1.0.0": {
-                    "download": "https://github.com/NuraShade/NuraShadeWeather/releases/download/v1.0.0/nurashadeweather_v1.0.0.zip"
-                },
-                "latest": "1.0.0"
-            },
-            "dependencies": {},
-            "icon": "fas fa-cloud-sun"
-        }
-    };
-    
-    return packageData[packageName] || null;
-}
-
-function getLocalAllPackageDetails() {
-    const packages = [
-        "nurashade-reversegeo",
-        "nurashadeweather"
-    ];
-    
-    return packages.map(name => getLocalPackageData(name)).filter(pkg => pkg !== null);
-}
-
-// Package Functions
-// Global variables to track packages
-let allPackages = [];
-let displayedPackages = [];
-let currentPage = 1;
-const packagesPerPage = 6;
-
-// Package search functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Load packages when page loads
-    // Only load packages on pages that have the packages grid
-    if (document.getElementById('packages-grid')) {
-        loadPackages();
-    }
-    
-    const searchInput = document.getElementById('package-search');
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            filterPackages(searchTerm);
-        });
-    }
-    
-    // Handle button clicks using event delegation
-    const packagesContainer = document.getElementById('packages-grid');
-    const featuredContainer = document.getElementById('featured-packages-grid');
-    
-    function handlePackageAction(e) {
-        const detailsButton = e.target.closest('.btn-secondary');
+    showCopyFeedback(btn) {
+        const original = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = '<span class="copy-btn-icon checkmark-icon"></span>';
         
-        if (detailsButton) {
-            const packageCard = detailsButton.closest('.package-card');
-            const packageNameElement = packageCard.querySelector('.package-name');
-            if (packageNameElement) {
-                const packageName = packageNameElement.textContent;
-                // Redirect to package detail page instead of showing modal
-                window.location.href = `package/detail.html?name=${encodeURIComponent(packageName)}`;
+        setTimeout(() => {
+            btn.innerHTML = original;
+            btn.classList.remove('copied');
+        }, 2000);
+    },
+
+    // --- Terminal Animation ---
+    initTerminals() {
+        document.querySelectorAll(CONFIG.selectors.ui.terminals).forEach(terminal => {
+            if (!terminal.dataset.terminalLines) return;
+            
+            const lines = JSON.parse(terminal.dataset.terminalLines);
+            const classes = JSON.parse(terminal.dataset.lineClasses || '[]');
+            terminal.dataset.original = terminal.innerHTML; // Backup
+            
+            this.runTerminalAnimation(terminal, lines, classes);
+        });
+    },
+
+    runTerminalAnimation(el, lines, classes) {
+        el.innerHTML = ''; // Reset
+        let lineIdx = 0;
+        let charIdx = 0;
+        
+        const type = () => {
+            if (lineIdx >= lines.length) {
+                // Restore completed state to prevent layout shifts or empty states if re-triggered
+                el.innerHTML = el.dataset.original; 
+                return;
             }
+
+            const currentLine = lines[lineIdx];
+            const currentClass = classes[lineIdx];
+
+            // Construct previous lines
+            let html = lines.slice(0, lineIdx).map((l, i) => 
+                classes[i] ? `<span class="${classes[i]}">${l}</span>` : l
+            ).join('\n') + '\n';
+
+            // Construct current typing line
+            let typed = currentLine.substring(0, charIdx);
+            if (currentClass) typed = `<span class="${currentClass}">${typed}</span>`;
+            
+            el.innerHTML = html + typed;
+
+            if (charIdx < currentLine.length) {
+                charIdx++;
+                setTimeout(type, 30);
+            } else {
+                charIdx = 0;
+                lineIdx++;
+                setTimeout(type, 800);
+            }
+        };
+
+        type();
+    }
+};
+
+/* =========================================
+   6. PAGE SPECIFIC LOGIC
+   ========================================= */
+const Pages = {
+    init() {
+        // Check which page we are on and init relevant logic
+        if (document.getElementById('packages-grid')) this.Packages.init();
+        if (document.getElementById('package-readme')) this.PackageDetail.init();
+    },
+
+    // --- Packages List Page ---
+    Packages: {
+        init() {
+            this.grid = document.querySelector(CONFIG.selectors.packages.grid);
+            this.featured = document.querySelector(CONFIG.selectors.packages.featuredGrid);
+            this.search = document.querySelector(CONFIG.selectors.packages.search);
+            this.loadMoreBtn = document.querySelector(CONFIG.selectors.packages.loadMore);
+            
+            // Event Listeners
+            if (this.search) {
+                this.search.addEventListener('input', (e) => this.filter(e.target.value));
+            }
+            if (this.loadMoreBtn) {
+                this.loadMoreBtn.addEventListener('click', () => this.loadMore());
+            }
+            
+            // Clicks on "View Details"
+            const gridHandler = (e) => {
+                const btn = e.target.closest('.btn-secondary');
+                if (btn) {
+                   const card = btn.closest('.package-card');
+                   const name = card.querySelector('.package-name').textContent;
+                   window.location.href = `package/detail.html?name=${encodeURIComponent(name)}`;
+                }
+            };
+            if (this.grid) this.grid.addEventListener('click', gridHandler);
+            if (this.featured) this.featured.addEventListener('click', gridHandler);
+
+            // Initial Load
+            this.load();
+        },
+
+        async load() {
+            const packages = await DataService.fetchAllPackages();
+            STATE.packages.all = packages;
+            STATE.packages.displayed = [...packages];
+            
+            this.render(STATE.packages.displayed.slice(0, CONFIG.pagination.perPage));
+            this.renderFeatured(packages);
+            this.updateLoadMore(CONFIG.pagination.perPage);
+        },
+
+        render(items, append = false) {
+            if (!this.grid) return;
+            
+            if (!items.length) {
+                this.grid.innerHTML = '<div class="no-packages-message">No packages found.</div>';
+                return;
+            }
+
+            const html = items.map(pkg => this.createCardHtml(pkg)).join('');
+            
+            if (append) {
+                this.grid.innerHTML += html;
+            } else {
+                this.grid.innerHTML = html;
+            }
+        },
+
+        renderFeatured(packages) {
+            if (!this.featured || !packages.length) return;
+            // Feature the first package or filter by some criteria
+            const featuredPkg = packages[0]; 
+            
+            this.featured.innerHTML = this.createCardHtml(featuredPkg, true);
+        },
+
+        createCardHtml(pkg, isFeatured = false) {
+            const classes = isFeatured ? 'package-card featured' : 'package-card';
+            const badge = isFeatured ? '<div class="package-badge">Featured</div>' : '';
+            const icon = pkg.icon ? `<div class="package-icon"><i class="${pkg.icon}"></i></div>` : '';
+            const downloads = pkg.downloadCount 
+                ? `<span class="package-downloads"><i class="fas fa-download"></i> ${pkg.downloadCount}</span>` 
+                : '';
+
+            return `
+                <div class="${classes}" data-package-name="${pkg.name}">
+                    ${badge}
+                    <div class="package-header">
+                        ${icon}
+                        <div class="package-info">
+                            <h3 class="package-name">${pkg.name}</h3>
+                            <p class="package-author">by ${pkg.author}</p>
+                        </div>
+                    </div>
+                    <p class="package-description">${pkg.description}</p>
+                    <div class="package-meta">
+                        <span class="package-version">v${pkg.versions.latest}</span>
+                        ${downloads}
+                    </div>
+                    <div class="package-actions">
+                        <button class="btn btn-secondary">View Details</button>
+                    </div>
+                </div>
+            `;
+        },
+
+        filter(term) {
+            const lowerTerm = term.toLowerCase();
+            STATE.packages.displayed = STATE.packages.all.filter(p => 
+                p.name.toLowerCase().includes(lowerTerm) ||
+                p.author.toLowerCase().includes(lowerTerm) ||
+                p.description.toLowerCase().includes(lowerTerm)
+            );
+            
+            STATE.packages.currentPage = 1;
+            this.render(STATE.packages.displayed.slice(0, CONFIG.pagination.perPage));
+            this.updateLoadMore(CONFIG.pagination.perPage);
+        },
+
+        loadMore() {
+            STATE.packages.currentPage++;
+            const start = (STATE.packages.currentPage - 1) * CONFIG.pagination.perPage;
+            const end = start + CONFIG.pagination.perPage;
+            
+            const nextBatch = STATE.packages.displayed.slice(start, end);
+            this.render(nextBatch, true);
+            this.updateLoadMore(end);
+        },
+
+        updateLoadMore(shownCount) {
+            if (!this.loadMoreBtn) return;
+            this.loadMoreBtn.style.display = shownCount >= STATE.packages.displayed.length ? 'none' : 'block';
+        }
+    },
+
+    // --- Package Details Page ---
+    PackageDetail: {
+        async init() {
+            const params = new URLSearchParams(window.location.search);
+            const name = params.get('name');
+
+            if (!name) {
+                this.showError('No package specified.');
+                return;
+            }
+
+            const pkg = await DataService.fetchPackageDetails(name);
+            if (!pkg) {
+                this.showError('Package not found.');
+                return;
+            }
+
+            this.render(pkg);
+        },
+
+        render(pkg) {
+            // Title & SEO
+            document.title = `${pkg.name} - Rainmeas`;
+            this.setText('package-name-breadcrumb', pkg.name);
+            this.setText('package-title', pkg.name);
+            this.setText('package-author', `by ${pkg.author}`);
+            this.setText('package-version', `v${pkg.versions.latest}`);
+            this.setText('package-license', pkg.license || 'Not specified');
+            this.setText('install-command', `rainmeas install ${pkg.name}`);
+
+            // Versions
+            const otherVersions = Object.keys(pkg.versions).filter(v => v !== 'latest').join(', ');
+            this.setText('package-versions', otherVersions || 'None');
+
+            // GitHub Link
+            const gitLink = document.getElementById('github-link');
+            if (gitLink) {
+                if (pkg.homepage) gitLink.href = pkg.homepage;
+                else gitLink.style.display = 'none';
+            }
+
+            // Downloads injection
+            if (pkg.downloadCount) {
+                this.injectDownloadCount(pkg.downloadCount);
+            }
+
+            // Markdown Content
+            this.renderReadme(pkg);
+        },
+
+        async renderReadme(pkg) {
+            const container = document.getElementById('package-readme');
+            if (!container) return;
+
+            if (pkg.markdown) {
+                try {
+                    const res = await fetch(pkg.markdown);
+                    if (!res.ok) throw new Error('Failed to load markdown');
+                    const text = await res.text();
+                    
+                    if (typeof marked !== 'undefined') {
+                        container.innerHTML = marked.parse(text);
+                    } else {
+                        container.textContent = text;
+                    }
+                } catch (e) {
+                    container.innerHTML = `<p>Error loading documentation. View on <a href="${pkg.homepage}">GitHub</a>.</p>`;
+                }
+            } else {
+                container.innerHTML = `<p>${pkg.description}</p>`;
+            }
+        },
+
+        injectDownloadCount(count) {
+            const card = document.querySelector('.package-detail-card');
+            if (!card) return;
+            
+            // Insert before the last item (usually versions or license)
+            const div = document.createElement('div');
+            div.className = 'package-detail-item';
+            div.innerHTML = `
+                <div class="package-detail-label">Downloads</div>
+                <div class="package-detail-value"><i class="fas fa-download"></i> ${count}</div>
+            `;
+            
+            const last = card.querySelector('.package-detail-item:last-child');
+            if (last) last.parentNode.insertBefore(div, last);
+        },
+
+        setText(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+        },
+
+        showError(msg) {
+            const el = document.getElementById('package-readme');
+            if (el) el.innerHTML = `<div class="error-message">${msg}</div>`;
         }
     }
+};
+
+/* =========================================
+   7. INITIALIZATION
+   ========================================= */
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Core UI logic
+    Navigation.init();
+    UI.initScrollAnimations();
+    UI.initEffects();
     
-    if (packagesContainer) {
-        packagesContainer.addEventListener('click', handlePackageAction);
-    }
+    // 2. Components
+    Components.init();
+
+    // 3. Page Logic
+    Pages.init();
     
-    if (featuredContainer) {
-        featuredContainer.addEventListener('click', handlePackageAction);
-    }
-    
-    // Load more packages functionality
-    const loadMoreButton = document.getElementById('load-more-btn');
-    if (loadMoreButton) {
-        loadMoreButton.addEventListener('click', function() {
-            loadMorePackages();
-        });
-    }
-    
-    // Modal close functionality - REMOVED as we're using individual package pages
+    console.log('Rainmeas App Initialized');
 });
 
-// Function to load packages from registry
-async function loadPackages() {
-    try {
-        const packages = await getAllPackageDetails();
-        allPackages = packages;
-        displayedPackages = [...packages];
-        
-        displayPackages(packages.slice(0, packagesPerPage));
-        displayFeaturedPackages(packages);
-        
-        // Hide load more button if all packages are displayed
-        const loadMoreButton = document.getElementById('load-more-btn');
-        if (loadMoreButton) {
-            if (packages.length <= packagesPerPage) {
-                loadMoreButton.style.display = 'none';
-            } else {
-                loadMoreButton.style.display = 'block';
-            }
-        }
-    } catch (error) {
-        console.error('Error loading packages:', error);
-        const packagesGrid = document.getElementById('packages-grid');
-        if (packagesGrid) {
-            packagesGrid.innerHTML = '<div class="error-message">Failed to load packages. Please try again later.</div>';
-        }
-    }
-}
-
-// Function to display packages
-function displayPackages(packages) {
-    const packagesGrid = document.getElementById('packages-grid');
-    
-    // Check if packages grid exists before trying to manipulate it
-    if (!packagesGrid) {
-        console.warn('Packages grid element not found');
-        return;
-    }
-    
-    if (!packages || packages.length === 0) {
-        packagesGrid.innerHTML = '<div class="no-packages-message">No packages found.</div>';
-        return;
-    }
-    
-    let packagesHTML = '';
-    
-    packages.forEach(pkg => {
-        packagesHTML += `
-            <div class="package-card" data-package-name="${pkg.name}">
-                <div class="package-header">
-                    ${pkg.icon ? `
-                        <div class="package-icon">
-                            <i class="${pkg.icon}"></i>
-                        </div>
-                    ` : ''}
-                    <div class="package-info">
-                        <h3 class="package-name">${pkg.name}</h3>
-                        <p class="package-author">by ${pkg.author}</p>
-                    </div>
-                </div>
-                <p class="package-description">
-                    ${pkg.description}
-                </p>
-                <div class="package-meta">
-                    <span class="package-version">v${pkg.versions.latest}</span>
-                    ${pkg.downloadCount !== undefined ? `<span class="package-downloads"><i class="fas fa-download"></i> ${pkg.downloadCount}</span>` : ''}
-                </div>
-                <div class="package-actions">
-                    <button class="btn btn-secondary">View Details</button>
-                </div>
-            </div>
-        `;
-    });
-    
-    // If this is the first load, replace the loading message
-    // Otherwise, append to existing packages
-    if (currentPage === 1) {
-        packagesGrid.innerHTML = packagesHTML;
-    } else {
-        packagesGrid.innerHTML += packagesHTML;
-    }
-}
-
-// Function to display featured packages
-function displayFeaturedPackages(packages) {
-    const featuredGrid = document.getElementById('featured-packages-grid');
-    
-    // Check if featured packages grid exists before trying to manipulate it
-    if (!featuredGrid) {
-        console.warn('Featured packages grid element not found');
-        return;
-    }
-    
-    if (!packages || packages.length === 0) {
-        featuredGrid.innerHTML = '<div class="no-packages-message">No featured packages available.</div>';
-        return;
-    }
-    
-    // For now, we'll feature the first package as an example
-    if (packages.length > 0) {
-        const featuredPkg = packages[0];
-        const featuredHTML = `
-            <div class="package-card featured" data-package-name="${featuredPkg.name}">
-                <div class="package-badge">Featured</div>
-                <div class="package-header">
-                    ${featuredPkg.icon ? `
-                        <div class="package-icon">
-                            <i class="${featuredPkg.icon}"></i>
-                        </div>
-                    ` : ''}
-                    <div class="package-info">
-                        <h3 class="package-name">${featuredPkg.name}</h3>
-                        <p class="package-author">by ${featuredPkg.author}</p>
-                    </div>
-                </div>
-                <p class="package-description">
-                    ${featuredPkg.description}
-                </p>
-                <div class="package-meta">
-                    <span class="package-version">v${featuredPkg.versions.latest}</span>
-                    ${featuredPkg.downloadCount !== undefined ? `<span class="package-downloads"><i class="fas fa-download"></i> ${featuredPkg.downloadCount}</span>` : ''}
-                </div>
-                <div class="package-actions">
-                    <button class="btn btn-secondary">View Details</button>
-                </div>
-            </div>
-        `;
-        
-        featuredGrid.innerHTML = featuredHTML;
-    }
-}
-
-// Function to filter packages based on search term
-function filterPackages(searchTerm) {
-    if (!searchTerm) {
-        // If no search term, show all packages
-        displayedPackages = [...allPackages];
-        currentPage = 1;
-        displayPackages(displayedPackages.slice(0, packagesPerPage));
-    } else {
-        // Filter packages based on search term
-        displayedPackages = allPackages.filter(pkg => 
-            pkg.name.toLowerCase().includes(searchTerm) || 
-            pkg.author.toLowerCase().includes(searchTerm) || 
-            pkg.description.toLowerCase().includes(searchTerm)
-        );
-        
-        // Reset pagination and display filtered packages
-        currentPage = 1;
-        displayPackages(displayedPackages.slice(0, packagesPerPage));
-    }
-    
-    // Show/hide load more button based on filtered results
-    const loadMoreButton = document.getElementById('load-more-btn');
-    if (loadMoreButton) {
-        if (displayedPackages.length <= packagesPerPage) {
-            loadMoreButton.style.display = 'none';
-        } else {
-            loadMoreButton.style.display = 'block';
-        }
-    }
-}
-
-// Function to load more packages
-function loadMorePackages() {
-    currentPage++;
-    const startIndex = (currentPage - 1) * packagesPerPage;
-    const endIndex = startIndex + packagesPerPage;
-    const packagesToDisplay = displayedPackages.slice(startIndex, endIndex);
-    
-    displayPackages(packagesToDisplay);
-    
-    // Hide load more button if all packages are displayed
-    const loadMoreButton = document.getElementById('load-more-btn');
-    if (loadMoreButton) {
-        if (endIndex >= displayedPackages.length) {
-            loadMoreButton.style.display = 'none';
-        }
-    }
-}
-
-// Package Detail Functions
-// Get package name from URL parameter
-function getParameterByName(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
-}
-
-// Configure marked.js options
-// Only configure if marked is available (loaded on package detail page)
+// Configure Marked.js if present
 if (typeof marked !== 'undefined') {
     marked.setOptions({
         gfm: true,
         breaks: true,
         smartLists: true,
-        smartypants: true,
-        highlight: function(code, lang) {
-            // Simple syntax highlighting
-            return code;
-        }
+        smartypants: true
     });
 }
-
-// Fetch and render markdown content using marked.js
-async function fetchAndRenderMarkdown(url) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const markdownText = await response.text();
-        // Use marked.js to convert markdown to HTML
-        if (typeof marked !== 'undefined') {
-            return marked.parse(markdownText);
-        } else {
-            // Fallback if marked is not available
-            return '<p>Error: Markdown renderer not available.</p>';
-        }
-    } catch (error) {
-        console.error('Error fetching markdown:', error);
-        return '<p>Error loading documentation. Please visit the <a href="' + url + '" target="_blank">source</a> directly.</p>';
-    }
-}
-
-// Display package details
-async function displayPackageDetails(packageName) {
-    try {
-        // Update the page title
-        document.title = packageName + ' - Rainmeas';
-        
-        // Update breadcrumb
-        const breadcrumbElement = document.getElementById('package-name-breadcrumb');
-        if (breadcrumbElement) {
-            breadcrumbElement.textContent = packageName;
-        }
-        
-        const pkg = await fetchPackageDetails(packageName);
-        if (!pkg) {
-            const readmeElement = document.getElementById('package-readme');
-            if (readmeElement) {
-                readmeElement.innerHTML = '<div class="error-message">Package not found.</div>';
-            }
-            return;
-        }
-        
-        // Update header information
-        const titleElement = document.getElementById('package-title');
-        if (titleElement) {
-            titleElement.textContent = pkg.name;
-        }
-        
-        const authorElement = document.getElementById('package-author');
-        if (authorElement) {
-            authorElement.textContent = 'by ' + pkg.author;
-        }
-        
-        // Update sidebar information
-        const versionElement = document.getElementById('package-version');
-        if (versionElement) {
-            versionElement.textContent = 'v' + pkg.versions.latest;
-        }
-        
-        const licenseElement = document.getElementById('package-license');
-        if (licenseElement) {
-            licenseElement.textContent = pkg.license || 'Not specified';
-        }
-        
-        // Format versions list
-        const versionsList = Object.keys(pkg.versions)
-            .filter(v => v !== 'latest')
-            .join(', ') || 'None';
-        const versionsElement = document.getElementById('package-versions');
-        if (versionsElement) {
-            versionsElement.textContent = versionsList;
-        }
-        
-        // Add download count if available
-        if (pkg.downloadCount !== undefined) {
-            const packageDetailCard = document.querySelector('.package-detail-card');
-            if (packageDetailCard) {
-                const downloadItem = document.createElement('div');
-                downloadItem.className = 'package-detail-item';
-                downloadItem.innerHTML = `
-                    <div class="package-detail-label">Downloads</div>
-                    <div class="package-detail-value"><i class="fas fa-download"></i> ${pkg.downloadCount}</div>
-                `;
-                
-                // Insert before the last item (installation card)
-                const lastItem = packageDetailCard.querySelector('.package-detail-item:last-child');
-                if (lastItem && lastItem.parentNode) {
-                    lastItem.parentNode.insertBefore(downloadItem, lastItem);
-                }
-            }
-        }
-        
-        // Update installation command
-        const installCommandElement = document.getElementById('install-command');
-        if (installCommandElement) {
-            installCommandElement.textContent = 'rainmeas install ' + pkg.name;
-        }
-        
-        // Update GitHub link
-        const githubLink = document.getElementById('github-link');
-        if (githubLink) {
-            if (pkg.homepage) {
-                githubLink.href = pkg.homepage;
-            } else {
-                githubLink.style.display = 'none';
-            }
-        }
-        
-        // Package icon functionality removed as per project specification
-        
-        // Fetch and render README if available
-        const readmeElement = document.getElementById('package-readme');
-        if (readmeElement) {
-            if (pkg.markdown) {
-                const readmeHtml = await fetchAndRenderMarkdown(pkg.markdown);
-                readmeElement.innerHTML = readmeHtml;
-            } else {
-                // If no markdown, show description
-                readmeElement.innerHTML = '<p>' + pkg.description + '</p>';
-            }
-        }
-        
-    } catch (error) {
-        console.error('Error loading package details:', error);
-        const readmeElement = document.getElementById('package-readme');
-        if (readmeElement) {
-            readmeElement.innerHTML = '<div class="error-message">Failed to load package details. Please try again later.</div>';
-        }
-    }
-}
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    const packageName = getParameterByName('name');
-    if (packageName) {
-        displayPackageDetails(packageName);
-    } else {
-        const readmeElement = document.getElementById('package-readme');
-        if (readmeElement) {
-            readmeElement.innerHTML = '<div class="error-message">No package specified.</div>';
-        }
-    }
-});
-
-// New Header Component JavaScript
-class HeaderNew {
-    constructor() {
-        this.init();
-    }
-
-    init() {
-        // Wait for DOM to be fully loaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.bindEvents());
-        } else {
-            this.bindEvents();
-        }
-    }
-
-    bindEvents() {
-        const navToggle = document.querySelector('.nav-toggle');
-        const navMenu = document.querySelector('.nav-menu');
-        
-        if (navToggle && navMenu) {
-            // Toggle mobile menu
-            navToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.toggleMenu(navMenu, navToggle);
-            });
-            
-            // Close menu when clicking on a link
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', () => {
-                    this.closeMenu(navMenu, navToggle);
-                });
-            });
-            
-            // Close menu when clicking outside
-            document.addEventListener('click', (event) => {
-                const isClickInsideNav = navToggle.contains(event.target) || navMenu.contains(event.target);
-                
-                if (!isClickInsideNav) {
-                    this.closeMenu(navMenu, navToggle);
-                }
-            });
-
-            // Handle keyboard navigation
-            this.setupKeyboardNavigation(navMenu);
-        }
-
-        // Set active link based on current page
-        this.setActiveLink();
-    }
-
-    toggleMenu(navMenu, navToggle) {
-        const isActive = navMenu.classList.toggle('active');
-        navToggle.classList.toggle('active');
-        navToggle.setAttribute('aria-expanded', isActive);
-        
-        // Toggle icons
-        const menuIcon = navToggle.querySelector('.menu-icon');
-        const closeIcon = navToggle.querySelector('.close-icon');
-        
-        if (menuIcon && closeIcon) {
-            if (isActive) {
-                menuIcon.style.display = 'none';
-                closeIcon.style.display = 'block';
-            } else {
-                menuIcon.style.display = 'block';
-                closeIcon.style.display = 'none';
-            }
-        }
-        
-        // Prevent body scroll when menu is open
-        document.body.style.overflow = isActive ? 'hidden' : '';
-    }
-
-    closeMenu(navMenu, navToggle) {
-        navMenu.classList.remove('active');
-        navToggle.classList.remove('active');
-        navToggle.setAttribute('aria-expanded', 'false');
-        
-        // Toggle icons back to menu icon
-        const menuIcon = navToggle.querySelector('.menu-icon');
-        const closeIcon = navToggle.querySelector('.close-icon');
-        
-        if (menuIcon && closeIcon) {
-            menuIcon.style.display = 'block';
-            closeIcon.style.display = 'none';
-        }
-        
-        // Re-enable body scroll
-        document.body.style.overflow = '';
-    }
-
-    setupKeyboardNavigation(navMenu) {
-        const menuLinks = navMenu.querySelectorAll('.nav-link');
-        if (menuLinks.length === 0) return;
-
-        navMenu.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.closeMenu(navMenu, document.querySelector('.nav-toggle'));
-                document.querySelector('.nav-toggle').focus();
-            }
-        });
-
-        menuLinks.forEach((link, index) => {
-            link.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    const nextIndex = (index + 1) % menuLinks.length;
-                    menuLinks[nextIndex].focus();
-                } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    const prevIndex = (index - 1 + menuLinks.length) % menuLinks.length;
-                    menuLinks[prevIndex].focus();
-                }
-            });
-        });
-    }
-
-    setActiveLink() {
-        // Get current page path
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-        const fullPath = window.location.pathname;
-            
-        // Remove active class from all links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-            
-        // Check if we're on a documentation page
-        if (fullPath.includes('/docs/') || fullPath.includes('/documentation')) {
-            // Activate the Documentation link for all documentation pages
-            const docLink = document.querySelector('.nav-link[href*="documentation"]');
-            if (docLink) {
-                docLink.classList.add('active');
-                return;
-            }
-        }
-            
-        // Add active class to current page link
-        const activeLink = document.querySelector(`.nav-link[href*="${currentPage}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-        } else {
-            // Fallback for home page
-            if (currentPage === 'index.html' || currentPage === '') {
-                const homeLink = document.querySelector('.nav-link[href="index.html"], .nav-link[href="/" ]');
-                if (homeLink) {
-                    homeLink.classList.add('active');
-                }
-            }
-        }
-    }
-}
-
-// Initialize the header component
-const headerNew = new HeaderNew();
-
-// Sidebar Component JavaScript
-class Sidebar {
-    constructor() {
-        this.init();
-    }
-
-    init() {
-        // Wait for DOM to be fully loaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.bindEvents());
-        } else {
-            this.bindEvents();
-        }
-    }
-
-    bindEvents() {
-        // Set active link based on current page
-        this.setActiveLink();
-    }
-
-    setActiveLink() {
-        // Get current page path
-        const currentPage = window.location.pathname.split('/').pop() || 'getting-started.html';
-        
-        // Remove active class from all links
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        
-        // Add active class to current page link
-        const activeLink = document.querySelector(`.sidebar-link[href="${currentPage}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
-    }
-}
-
-// Initialize the sidebar component
-const sidebar = new Sidebar();
-
-// CodeBlock Component
-/**
- * CodeBlock Component
- * A reusable component for displaying code blocks with copy functionality
- */
-class CodeBlock {
-    /**
-     * Initialize a new CodeBlock instance
-     * @param {HTMLElement} element - The container element for the code block
-     * @param {Object} options - Configuration options
-     */
-    constructor(element, options = {}) {
-        this.element = element;
-        this.options = {
-            copyButtonClass: 'copy-btn',
-            copiedClass: 'copied',
-            copyDelay: 2000,
-            ...options
-        };
-        
-        this.init();
-    }
-    
-    /**
-     * Initialize the component
-     */
-    init() {
-        this.copyButton = this.element.querySelector(`.${this.options.copyButtonClass}`);
-        if (this.copyButton) {
-            this.bindEvents();
-        }
-    }
-    
-    /**
-     * Bind event listeners
-     */
-    bindEvents() {
-        this.copyButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.copyToClipboard();
-        });
-    }
-    
-    /**
-     * Copy code content to clipboard
-     */
-    copyToClipboard() {
-        // Get the code content to copy
-        let codeToCopy = '';
-        
-        // Check for data-copy attribute first
-        if (this.copyButton.hasAttribute('data-copy')) {
-            codeToCopy = this.copyButton.getAttribute('data-copy');
-        } 
-        // Check for data-command-target attribute (used in package detail)
-        else if (this.copyButton.hasAttribute('data-command-target')) {
-            const targetId = this.copyButton.getAttribute('data-command-target');
-            const targetElement = document.getElementById(targetId);
-            if (targetElement) {
-                codeToCopy = targetElement.textContent;
-            }
-        }
-        // Fallback: get text content from adjacent code element
-        else {
-            const codeElement = this.element.querySelector('code') || 
-                              this.element.querySelector('pre') ||
-                              this.element.previousElementSibling;
-            if (codeElement) {
-                codeToCopy = codeElement.textContent;
-            }
-        }
-        
-        // Copy to clipboard
-        if (codeToCopy) {
-            navigator.clipboard.writeText(codeToCopy).then(() => {
-                this.showCopyFeedback();
-            }).catch(err => {
-                console.error('Failed to copy code: ', err);
-            });
-        }
-    }
-    
-    /**
-     * Show visual feedback when code is copied
-     */
-    showCopyFeedback() {
-        const originalContent = this.copyButton.innerHTML;
-        
-        // Add copied class for styling
-        this.copyButton.classList.add(this.options.copiedClass);
-        
-        // Change button content to checkmark
-        this.copyButton.innerHTML = '<span class="copy-btn-icon checkmark-icon"></span>';
-        
-        // Reset after delay
-        setTimeout(() => {
-            this.copyButton.innerHTML = originalContent;
-            this.copyButton.classList.remove(this.options.copiedClass);
-        }, this.options.copyDelay);
-    }
-    
-    /**
-     * Static method to initialize all code blocks on the page
-     */
-    static initAll() {
-        // Initialize code blocks with copy buttons
-        const codeBlocks = document.querySelectorAll('.code-block');
-        codeBlocks.forEach(block => {
-            new CodeBlock(block);
-        });
-        
-
-    }
-}
-
-// Initialize when DOM is loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', CodeBlock.initAll);
-} else {
-    CodeBlock.initAll();
-}
-
-// CodeTerminal Component
-class CodeTerminal {
-    constructor(element, options = {}) {
-        this.element = element;
-        this.options = {
-            typeSpeed: options.typeSpeed || 30,
-            pauseDuration: options.pauseDuration || 800,
-            lines: options.lines || [],
-            lineClasses: options.lineClasses || [],
-            ...options
-        };
-        
-        this.init();
-    }
-    
-    init() {
-        this.terminalCode = this.element.querySelector('.terminal-code');
-        if (this.terminalCode) {
-            this.animate();
-        }
-    }
-    
-    animate() {
-        // Store the original content for graceful degradation
-        const originalContent = this.terminalCode.innerHTML;
-        
-        // Clear the terminal initially to start with animation
-        this.terminalCode.innerHTML = '';
-        
-        // Start the typing animation
-        this.lineIndex = 0;
-        this.charIndex = 0;
-        this.typeLine();
-    }
-    
-    typeLine() {
-        if (this.lineIndex >= this.options.lines.length) {
-            // Animation completed, show the final content
-            this.terminalCode.innerHTML = this.terminalCode.dataset.original || this.terminalCode.innerHTML;
-            return;
-        }
-        
-        const currentLine = this.options.lines[this.lineIndex];
-        
-        if (this.charIndex <= currentLine.length) {
-            // Build content up to current line
-            let content = '';
-            for (let i = 0; i < this.lineIndex; i++) {
-                const lineClass = this.options.lineClasses[i];
-                if (lineClass) {
-                    content += `<span class="${lineClass}">${this.options.lines[i]}</span>`;
-                } else {
-                    content += this.options.lines[i];
-                }
-                content += '\n';
-            }
-            
-            // Add current line being typed
-            const currentClass = this.options.lineClasses[this.lineIndex];
-            let currentLineContent = currentLine.substring(0, this.charIndex);
-            if (currentClass && this.charIndex > 0) {
-                currentLineContent = `<span class="${currentClass}">${currentLineContent}</span>`;
-            }
-            content += currentLineContent;
-            
-            // Update terminal content
-            this.terminalCode.innerHTML = content;
-            
-            this.charIndex++;
-            setTimeout(() => this.typeLine(), this.options.typeSpeed);
-        } else {
-            // Move to next line after a pause
-            setTimeout(() => {
-                this.lineIndex++;
-                this.charIndex = 0;
-                this.typeLine();
-            }, this.options.pauseDuration);
-        }
-    }
-    
-    // Static method to initialize all terminals on the page
-    static initAll() {
-        const terminals = document.querySelectorAll('.terminal-code[data-terminal-lines]');
-        terminals.forEach(terminal => {
-            const container = terminal.closest('.terminal-window');
-            if (container) {
-                // Get lines from data attribute
-                const lines = JSON.parse(terminal.dataset.terminalLines || '[]');
-                const lineClasses = JSON.parse(terminal.dataset.lineClasses || '[]');
-                
-                // Store original content
-                terminal.dataset.original = terminal.innerHTML;
-                
-                new CodeTerminal(container, {
-                    lines: lines,
-                    lineClasses: lineClasses
-                });
-            }
-        });
-    }
-}
-
-// Initialize when DOM is loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', CodeTerminal.initAll);
-} else {
-    CodeTerminal.initAll();
-}
-
-// Footer Component JavaScript
-class Footer {
-    constructor() {
-        this.init();
-    }
-
-    init() {
-        // Wait for DOM to be fully loaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.render());
-        } else {
-            this.render();
-        }
-    }
-
-    render() {
-        // Footer is already in HTML, but we could add dynamic functionality here if needed
-        console.log('Footer component initialized');
-    }
-}
-
-// Initialize the footer component
-const footer = new Footer();
