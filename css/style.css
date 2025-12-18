@@ -1038,6 +1038,108 @@
        border: 1px solid var(--border-color);
    }
    
+   /* Package Tabs Styles */
+   .package-tabs {
+       display: flex;
+       border-bottom: 1px solid var(--border-color);
+       margin-bottom: 30px;
+       gap: 5px;
+   }
+   
+   .tab-btn {
+       background: none;
+       border: none;
+       color: var(--text-secondary);
+       padding: 12px 20px;
+       cursor: pointer;
+       font-size: 0.95rem;
+       font-weight: 600;
+       transition: var(--transition);
+       position: relative;
+       border-radius: 6px 6px 0 0;
+       display: flex;
+       align-items: center;
+       gap: 8px;
+   }
+   
+   .tab-btn i {
+       font-size: 0.9rem;
+   }
+   
+   .tab-btn:hover {
+       color: var(--text-primary);
+       background: rgba(255, 255, 255, 0.05);
+   }
+   
+   .tab-btn.active {
+       color: var(--primary-color);
+   }
+   
+   .tab-btn.active::after {
+       content: '';
+       position: absolute;
+       bottom: -1px;
+       left: 0;
+       width: 100%;
+       height: 2px;
+       background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+       border-radius: 2px;
+   }
+   
+   .tab-content {
+       display: none;
+       animation: fadeInUp 0.4s ease;
+   }
+   
+   .tab-content.active {
+       display: block;
+   }
+
+   /* Tab Content Specials */
+   .empty-state {
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       gap: 15px;
+   }
+
+   .empty-state i {
+       font-size: 3rem;
+       color: var(--text-muted);
+   }
+
+   .empty-state p {
+       color: var(--text-secondary);
+       margin-bottom: 20px;
+   }
+
+   .dependency-list {
+       list-style: none;
+       padding: 0;
+   }
+
+   .dependency-item {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       padding: 15px;
+       background: var(--surface-light);
+       border-radius: 8px;
+       margin-bottom: 10px;
+       border: 1px solid var(--border-color);
+   }
+
+   .dependency-name {
+       font-weight: 600;
+       color: var(--text-primary);
+   }
+
+   .dependency-version {
+       color: var(--accent-color);
+       font-family: 'Fira Code', monospace;
+       font-size: 0.9rem;
+   }
+   
    /* Package Readme Content Styles */
    .package-readme h1 {
         font-size: 2rem;

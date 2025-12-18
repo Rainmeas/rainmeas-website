@@ -585,6 +585,12 @@ const Pages = {
 
             // Markdown Content
             this.renderReadme(pkg);
+
+            // Dependencies
+            this.renderDependencies(pkg);
+
+            // Initialize Tabs
+            this.initTabs();
         },
 
         async renderReadme(pkg) {
@@ -664,6 +670,59 @@ const Pages = {
         showError(msg) {
             const el = document.getElementById('package-readme');
             if (el) el.innerHTML = `<div class="error-message">${msg}</div>`;
+        },
+
+        initTabs() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.getAttribute('data-tab');
+
+                    // Update buttons
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Update contents
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}-tab`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+        },
+
+        renderDependencies(pkg) {
+            const container = document.getElementById('package-dependencies');
+            if (!container) return;
+
+            // Get dependencies from the latest version
+            const latestVersion = pkg.versions.latest;
+            const deps = pkg.versions[latestVersion]?.dependencies;
+
+            if (deps && Object.keys(deps).length > 0) {
+                let html = '<ul class="dependency-list">';
+                for (const [name, version] of Object.entries(deps)) {
+                    html += `
+                        <li class="dependency-item">
+                            <span class="dependency-name">${name}</span>
+                            <span class="dependency-version">v${version}</span>
+                        </li>
+                    `;
+                }
+                html += '</ul>';
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
+                        <p>This package has no dependencies.</p>
+                    </div>
+                `;
+            }
         }
     }
 };

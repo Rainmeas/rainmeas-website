@@ -70,9 +70,28 @@
             <div class="package-content-layout">
                 <!-- Main Content -->
                 <div class="package-main-content">
-                    <div class="package-readme" id="package-readme">
-                        <div class="loading-message">
-                            <p>Loading package documentation...</p>
+                    <div class="package-tabs">
+                        <button class="tab-btn active" data-tab="readme">
+                            <i class="fas fa-file-alt"></i> README
+                        </button>
+                        <button class="tab-btn" data-tab="dependencies">
+                            <i class="fas fa-project-diagram"></i> Dependencies
+                        </button>
+                    </div>
+                    
+                    <div class="tab-content active" id="readme-tab">
+                        <div class="package-readme" id="package-readme">
+                            <div class="loading-message">
+                                <p>Loading package documentation...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="dependencies-tab">
+                        <div class="package-dependencies" id="package-dependencies">
+                            <div class="loading-message">
+                                <p>Loading dependencies...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
